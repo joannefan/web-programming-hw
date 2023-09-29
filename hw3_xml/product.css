@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
+
+product {
+    width: 80%;
+    margin: 0 auto;
+    background-color: #526877;
+    padding: 30px 0px;
+}
+thing {
+    display: block;
+    box-sizing: border-box;
+    border-radius: 10px;
+    width: 100%;
+    margin-bottom: 60px;
+    line-height: 1.6em;
+    background-color: #dae3e8;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+name {
+    display: block;
+    color: white;
+    font-size: 32px;
+    font-family: 'Handlee', cursive;
+    background-color: #225170;
+    padding: 10px;
+}
+description {
+    margin: 14px 30px 14px 30px;
+    display: block;
+    font-style: italic;
+    font-size: 22px;
+}
+price {
+    display: block;
+    margin-left: 30px;
+    margin-bottom: 20px;
+    font-size: 26px;
+    color: #721328;
+    font-weight: bold;
+}
+price::before {
+    content: "$";
+}
+/* styling for sizes and each size */
+sizes {
+    display: block;
+    margin-left: 30px;
+    font-size: 18px;
+}
+sizes::before {
+    content: "SIZE: ";
+}
+type {
+    font-size: 16px;
+}
+type::after {
+    content: " /";
+}
+type:last-of-type::after {
+    content: none;
+}
+/* styling for categories and each category */
+categories {
+    display: block;
+    margin: 10px 30px;
+    padding-bottom: 10px;
+    font-size: 18px;
+}
+categories::before {
+    content: "CATEGORY: ";
+}
+category {
+    display: inline-block;
+    color: black;
+    font-size: 16px;
+    margin: 0px 4px;
+    padding: 4px 0px;
+    width: 100px;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: white;
+}

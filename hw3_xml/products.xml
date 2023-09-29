@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="product.css"?>
+<product>
+    <thing>
+        <name>Memory Foam Pillow</name>
+        <description>A contoured memory foam pillow designed to provide optimal support and comfort for a restful night's sleep.</description>
+        <price>42.99</price>
+        <sizes>
+            <type>Standard</type>
+            <type>Large</type>
+        </sizes>
+        <categories>
+            <category>bedding</category>
+            <category>pillow</category>
+        </categories>
+    </thing>
+    <thing>
+        <name>All-Season Down Comforter</name>
+        <description>An all-season duvet filled with high-quality down, providing the perfect blend of warmth and breathability for year-round comfort.</description>
+        <price>104.99</price>
+        <sizes>
+            <type>Queen</type>
+        </sizes>
+        <categories>
+            <category>bedding</category>
+            <category>duvet</category>
+            <category>comforter</category>
+        </categories>
+    </thing>
+    <thing>
+        <name>Cotton Bed Sheet Set</name>
+        <description>A soft and hypoallergenic 100% cotton bed sheet set (1 fitted sheet, 1 flat sheet, 2 pillowcases).</description>
+        <price>49.99</price>
+        <sizes>
+            <type>Twin XL</type>
+            <type>Full</type>
+        </sizes>
+        <categories>
+            <category>bedding</category>
+            <category>sheets</category>
+        </categories>
+    </thing>
+    <thing>
+        <name>Microfiber Bed Sheet Set</name>
+        <description>A luxurious microfiber bed sheet set that is silky soft, hypoallergenic, and resistant to wrinkles (1 fitted sheet, 1 flat sheet, 2 pillowcases).</description>
+        <price>29.99</price>
+        <sizes>
+            <type>Twin XL</type>
+            <type>King</type>
+        </sizes>
+        <categories>
+            <category>bedding</category>
+            <category>mattress</category>
+        </categories>
+    </thing>
+    <thing>
+        <name>Mattress Protector</name>
+        <description>A waterproof and breathable mattress protector that safeguards your mattress from spills, stains, and allergens.</description>
+        <price>23.99</price>
+        <sizes>
+            <type>Queen</type>
+            <type>King</type>
+        </sizes>
+        <categories>
+            <category>bedding</category>
+            <category>mattress</category>
+        </categories>
+    </thing>
+    <thing>
+        <name>Satin Silk Pillowcase</name>
+        <description>A satin silk pillowcase designed to reduce friction and hair breakage, while keeping your skin moisturized and refreshed throughout the night.</description>
+        <price>24.99</price>
+        <sizes>
+            <type>Standard</type>
+            <type>Queen</type>
+            <type>King</type>
+        </sizes>
+        <categories>
+            <category>bedding</category>
+            <category>pillow</category>
+        </categories>
+    </thing>
+    <thing>
+        <name>Mulberry Silk Pillowcase</name>
+        <description>A luxurious silk pillowcase made from 100% pure mulberry silk, guaranteed to be smooth and gentle on the skin and hair.</description>
+        <price>37.99</price>
+        <sizes>
+            <type>King</type>
+        </sizes>
+        <categories>
+            <category>bedding</category>
+            <category>pillow</category>
+        </categories>
+    </thing>
+    <thing>
+        <name>Animal-themed Crib Bedding Set</name>
+        <description>A crib bedding set featuring fun animal designs, 100% cotton and gentle on your baby's skin.</description>
+        <price>58.99</price>
+        <sizes>
+            <type>Crib (Standard)</type>
+        </sizes>
+        <categories>
+            <category>bedding</category>
+            <category>sheets</category>
+            <category>nursery</category>
+        </categories>
+    </thing>
+</product>
