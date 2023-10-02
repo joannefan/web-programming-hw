@@ -1,12 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Handlee&display=swap');
 
-product {
+products {
     width: 80%;
     margin: 0 auto;
     background-color: #526877;
     padding: 30px 0px;
 }
-thing {
+product {
     display: block;
     box-sizing: border-box;
     border-radius: 10px;
