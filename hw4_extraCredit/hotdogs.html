@@ -21,14 +21,16 @@
             "use strict";
 
             // Constants
-            const HOTDOG = 3.75;
-            const FRIES = 3;
-            const DRINK = 2.50;
             const TAX_RATE = 0.0625;
             const DISCOUNT_THRESHOLD = 25;
             const DISCOUNT_RATE = 0.1;
+            const PRICE = Object.freeze({
+                "Hotdogs": 3.75,
+                "French Fries": 3,
+                "Sodas": 2.50
+            });
 
-            // Function declarations
+            // Function definitions
             /**
              * formats the given amount as a currency string.
              * 
@@ -71,23 +73,21 @@
             }
 
             // get quantities per item from user
-            const numDogs = prompt("How many hotdogs do you want?", "0");
-            const numFries = prompt("How many french fries do you want?", "0");
-            const numSoda = prompt("How many sodas do you want?", "0");
+            const quantities = {};
+            for (const item in PRICE) {
+                const qty = prompt("How many " + item.toLowerCase() + " do you want?", "0");
+                if (qty !== "0") {
+                    quantities[item] = parseInt(qty);
+                }
+            }
 
             // add item costs and their subtotal to the receipt
-            const order = [
-                ["Hotdog", numDogs * HOTDOG, numDogs], 
-                ["French Fries", numFries * FRIES, numFries],
-                ["Soda", numSoda * DRINK, numSoda]
-            ];
             let subtotal = 0;
-            for (const [item, cost, qty] of order) {
-                if (qty !== "0") {
-                    newReceiptRow(item, cost, qty);
-                    subtotal += cost;
-                }
-            }            
+            for (const [item, qty] of Object.entries(quantities)) {
+                const cost = PRICE[item] * qty;
+                newReceiptRow(item, cost, qty);
+                subtotal += cost; // accumulate item's cost in subtotal
+            }
             newReceiptRow("Subtotal Before Discount", subtotal);
 
             // calculate discount and update subtotal if the order qualifies
@@ -104,7 +104,7 @@
             newReceiptRow("Discount", discount);
             newReceiptRow("Subtotal After Discount", subtotal);
             newReceiptRow("Tax", taxAmount);
-            newReceiptRow("Final Total", final);            
+            newReceiptRow("Final Total", final);
         </script>
     </body>
 </html>
