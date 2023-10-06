@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Joe's Hotdogs</title>
+        <link href="styles.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <div class="container">
+            <h1>Joe's Hotdog Stand</h1>
+            <table id="receipt">
+                <tr>
+                    <th>DESCRIPTION</th>
+                    <th>PRICE</th>
+                </tr>
+            </table>
+        </div>
+
+        <script>
+            const HOTDOG = 3.75;
+            const FRIES = 3;
+            const DRINK = 2.50;
+            const TAX = 0.0625;
+
+            function newReceiptRow(name, value) {
+                formattedVal = currencyStr(value);
+                document.getElementById("receipt").innerHTML += 
+                    `<tr><td>${name}</td><td>${formattedVal}</td></tr>`;
+            }
+            function currencyStr(value) {
+                rounded = Math.round(value * 100) / 100;
+                
+                if (Math.round(value) - rounded == 0) {
+                    rounded += ".00";
+                } else {
+                    rounded += "";
+                    // has only one decimal place, e.g., 2.5, so we need to add a trailing 0
+                    if (rounded.split(".")[1].length === 1) {
+                        rounded += "0";
+                    }
+                }
+
+                return "$" + rounded;
+            }
+
+            numDogs = prompt("How many hotdogs do you want?", "0");
+            numFries = prompt("How many french fries do you want?", "0");
+            numSoda = prompt("How many sodas do you want?", "0");
+            // numDogs = 2;
+            // numFries = 3;
+            // numSoda = 4;
+
+            totalPriceDogs = numDogs * HOTDOG;
+            totalPriceFries = numFries * FRIES;
+            totalPriceSodas = numSoda * DRINK;
+
+            order = [
+                ["Hot dog &times; " + numDogs, totalPriceDogs], 
+                ["French fries &times; " + numFries, totalPriceFries],
+                ["Soda &times; " + numSoda, totalPriceSodas]
+            ];
+            for (const item of order) {
+                if (item[1] != "0") {
+                    newReceiptRow(item[0], item[1]);
+                }
+            }
+            
+            subtotal = totalPriceDogs + totalPriceFries + totalPriceSodas;
+            newReceiptRow("Subtotal before discount", subtotal);
+
+            discount = 0;
+            if (subtotal >= 25) {
+                discount = 0.1 * subtotal;
+                subtotal -= discount;
+            }
+            newReceiptRow("Discount", discount);
+            newReceiptRow("Subtotal after discount", subtotal);
+
+            taxAmount = TAX * subtotal;
+            newReceiptRow("Tax", taxAmount);
+
+            total = taxAmount + subtotal;
+            newReceiptRow("Final Total", total);            
+        </script>
+    </body>
+</html>
