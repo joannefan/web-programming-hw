@@ -6,17 +6,16 @@
         <link href="styles.css" rel="stylesheet" type="text/css" />
     </head>
     <body>
-        <div class="container">
-            <div class="overlay"></div>
-            <h1>Joe's Hotdog Stand</h1>
-            <table id="receipt">
-                <tr>
-                    <th>DESCRIPTION</th>
-                    <th>QUANTITY</th>
-                    <th>PRICE</th>
-                </tr>
-            </table>
-        </div>
+        <div class="background"></div>
+        <div class="overlay"></div>
+        <h1>Joe's Hotdog Stand</h1>
+        <table id="receipt">
+            <tr>
+                <th>DESCRIPTION</th>
+                <th>QUANTITY</th>
+                <th>PRICE</th>
+            </tr>
+        </table>
 
         <script>
             // Constants
@@ -74,13 +73,12 @@
                 discount = 0.1 * subtotal;
                 subtotal -= discount;
             }
+            taxAmount = TAX * subtotal;
+            total = taxAmount + subtotal;
+
             newReceiptRow("Discount", discount);
             newReceiptRow("Subtotal After Discount", subtotal);
-
-            taxAmount = TAX * subtotal;
             newReceiptRow("Tax", taxAmount);
-
-            total = taxAmount + subtotal;
             newReceiptRow("Final Total", total);            
         </script>
     </body>
