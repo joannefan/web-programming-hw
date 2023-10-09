@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Jumping Text</title>
+        <link href="styles.css" rel="stylesheet" type="text/css" />
+    </head>
+    <body>
+        <form action="#" method="get">
+            <input type="text" id="leftInput" name="leftInput">
+            <button type="button" id="btn">JUMP ></button>
+            <input type="text" id="rightInput" name="rightInput"> 
+        </form>
+          
+        <script>
+            "use strict";
+
+            function moveText(sourceID, destID) {
+                const sourceElem = document.getElementById(sourceID);
+                const elemText = sourceElem.value;
+                document.getElementById(destID).value = elemText;
+                sourceElem.value = "";
+            }
+
+            function buttonClick(e) {
+                if (button.innerText === "JUMP >") {
+                    button.innerText = "< JUMP";
+                    moveText("leftInput", "rightInput");
+                } else {
+                    button.innerText = "JUMP >";
+                    moveText("rightInput", "leftInput");
+                }
+            }
+
+            const button = document.getElementById("btn");
+            button.onclick = buttonClick;
+        </script>
+    </body>
+</html>
