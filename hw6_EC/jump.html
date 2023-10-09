@@ -3,7 +3,42 @@
     <head>
         <meta charset="UTF-8" />
         <title>Jumping Text</title>
-        <link href="styles.css" rel="stylesheet" type="text/css" />
+        <style type="text/css">
+            body, html {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            form {
+                display: flex;
+                justify-content: space-between;
+                box-sizing: border-box;
+                max-width: 750px;
+                width: 100%;
+                margin: 0 auto;
+                margin-top: 140px;
+            }
+            input[type="text"] {
+                font-size: 28px;
+                line-height: 1.8em;
+                text-align: center;
+                max-width: 220px;
+                width: 100%;
+                box-sizing: border-box;
+                border: 2px solid rgb(68, 127, 165);
+            }
+            button {
+                font-size: 28px;
+                line-height: 1.8em;
+                text-align: center;
+                max-width: 160px;
+                width: 100%;
+                box-sizing: border-box;
+                border: 2px solid rgb(142, 43, 25);
+                background-color: rgb(213, 211, 211);
+            }
+        </style>
     </head>
     <body>
         <form action="#" method="get">
@@ -11,8 +46,7 @@
             <button type="button" id="btn">JUMP ></button>
             <input type="text" id="rightInput" name="rightInput"> 
         </form>
-          
-        <script>
+        <script language="javascript">
             "use strict";
 
             function moveText(sourceID, destID) {
