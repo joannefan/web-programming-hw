@@ -4,19 +4,6 @@
         <meta charset="UTF-8" />
         <title>Joe's Hotdogs</title>
         <link href="styles.css" rel="stylesheet" type="text/css" />
-    </head>
-    <body>
-        <div class="background"></div>
-        <div class="overlay"></div>
-        <h1>Joe's Hotdog Stand</h1>
-        <table id="receipt">
-            <tr>
-                <th>DESCRIPTION</th>
-                <th>QUANTITY</th>
-                <th>PRICE</th>
-            </tr>
-        </table>
-
         <script>
             "use strict";
 
@@ -24,13 +11,15 @@
             const TAX_RATE = 0.0625;
             const DISCOUNT_THRESHOLD = 25;
             const DISCOUNT_RATE = 0.1;
+
+            // associative array (EC)
             const PRICE = Object.freeze({
                 "Hotdogs": 3.75,
                 "French Fries": 3,
                 "Sodas": 2.50
             });
 
-            // Function definitions
+            // Function declarations
             /**
              * formats the given amount as a currency string.
              * 
@@ -38,7 +27,7 @@
              * @throws - will throw type error if amount is not a number.
              * @return {string} - $ followed by amount padded with up to 2 trailing zeros.
              */
-            function currencyStr(amount) {
+             function currencyStr(amount) {
                 if (typeof amount !== "number") {
                     throw new TypeError("amount cannot be formatted as currency");
                 }
@@ -60,51 +49,73 @@
             }
 
             /**
-             * adds a new row to the receipt table.
+             * creates a new receipt row with three columns
              * 
              * @param {string} description - description of item or field.
              * @param {number} cost - how much the item or field costs.
              * @param {*} qty - quantity of item, optional and where applicable.
+             * @return {string} - a table row made from all the given details
              */
             function newReceiptRow(description, cost, qty = "&nbsp;") {
                 const formattedCost = currencyStr(cost);
                 const rowData = `<tr><td>${description}</td><td>${qty}</td><td>${formattedCost}</td></tr>`;
-                document.getElementById("receipt").innerHTML += rowData;
+                return rowData;
             }
+        </script>
+    </head>
+    <body>
+        <div class="background"></div>
+        <div class="overlay"></div>
+        <h1>Joe's Hotdog Stand</h1>
+        <table id="receipt">
+            <tr>
+                <th>DESCRIPTION</th>
+                <th>QUANTITY</th>
+                <th>PRICE</th>
+            </tr>
+        </table>
 
-            // get quantities per item from user
-            const quantities = {};
-            for (const item in PRICE) {
-                const qty = prompt("How many " + item.toLowerCase() + " do you want?", "0");
-                if (qty !== "0") {
-                    quantities[item] = parseInt(qty);
+        <script>
+            "use strict";
+
+            window.onload = function() {
+                // get quantities per item from user using loop (EC)
+                const quantities = {}; // associative array (EC)
+                for (const item in PRICE) {
+                    const qty = prompt("How many " + item.toLowerCase() + " do you want?", "0");
+                    if (qty !== "0") {
+                        quantities[item] = parseInt(qty);
+                    }
                 }
+
+                // add item costs and their subtotal to the receipt
+                let subtotal = 0;
+                let receiptRows = "";
+                for (const [item, qty] of Object.entries(quantities)) {
+                    const cost = PRICE[item] * qty;
+                    receiptRows += newReceiptRow(item, cost, qty);
+                    subtotal += cost; // accumulate item's cost in subtotal (EC)
+                }
+                receiptRows += newReceiptRow("Subtotal Before Discount", subtotal);
+
+                // calculate discount and update subtotal if the order qualifies
+                let discount = 0;
+                if (subtotal >= DISCOUNT_THRESHOLD) {
+                    discount = DISCOUNT_RATE * subtotal;
+                    subtotal -= discount;
+                }
+
+                // calculate final total after tax
+                const taxAmount = TAX_RATE * subtotal;
+                const final = taxAmount + subtotal;
+
+                receiptRows += newReceiptRow("Discount", discount) +
+                    newReceiptRow("Subtotal After Discount", subtotal) +
+                    newReceiptRow("Tax", taxAmount) + 
+                    newReceiptRow("Final Total", final);
+
+                document.getElementById("receipt").innerHTML += receiptRows;
             }
-
-            // add item costs and their subtotal to the receipt
-            let subtotal = 0;
-            for (const [item, qty] of Object.entries(quantities)) {
-                const cost = PRICE[item] * qty;
-                newReceiptRow(item, cost, qty);
-                subtotal += cost; // accumulate item's cost in subtotal
-            }
-            newReceiptRow("Subtotal Before Discount", subtotal);
-
-            // calculate discount and update subtotal if the order qualifies
-            let discount = 0;
-            if (subtotal >= DISCOUNT_THRESHOLD) {
-                discount = DISCOUNT_RATE * subtotal;
-                subtotal -= discount;
-            }
-
-            // calculate final total after tax
-            const taxAmount = TAX_RATE * subtotal;
-            const final = taxAmount + subtotal;
-
-            newReceiptRow("Discount", discount);
-            newReceiptRow("Subtotal After Discount", subtotal);
-            newReceiptRow("Tax", taxAmount);
-            newReceiptRow("Final Total", final);
         </script>
     </body>
 </html>

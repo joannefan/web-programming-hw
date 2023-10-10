@@ -4,19 +4,6 @@
         <meta charset="UTF-8" />
         <title>Joe's Hotdogs</title>
         <link href="styles.css" rel="stylesheet" type="text/css" />
-    </head>
-    <body>
-        <div class="background"></div>
-        <div class="overlay"></div>
-        <h1>Joe's Hotdog Stand</h1>
-        <table id="receipt">
-            <tr>
-                <th>DESCRIPTION</th>
-                <th>QUANTITY</th>
-                <th>PRICE</th>
-            </tr>
-        </table>
-
         <script>
             "use strict";
 
@@ -58,53 +45,75 @@
             }
 
             /**
-             * adds a new row to the receipt table.
+             * creates a new receipt row with three columns
              * 
              * @param {string} description - description of item or field.
              * @param {number} cost - how much the item or field costs.
              * @param {*} qty - quantity of item, optional and where applicable.
+             * @return {string} - a table row made from all the given details
              */
             function newReceiptRow(description, cost, qty = "&nbsp;") {
                 const formattedCost = currencyStr(cost);
                 const rowData = `<tr><td>${description}</td><td>${qty}</td><td>${formattedCost}</td></tr>`;
-                document.getElementById("receipt").innerHTML += rowData;
+                return rowData;
             }
+        </script>
+    </head>
+    <body>
+        <div class="background"></div>
+        <div class="overlay"></div>
+        <h1>Joe's Hotdog Stand</h1>
+        <table id="receipt">
+            <tr>
+                <th>DESCRIPTION</th>
+                <th>QUANTITY</th>
+                <th>PRICE</th>
+            </tr>
+        </table>
 
-            // get quantities per item from user
-            const numDogs = prompt("How many hotdogs do you want?", "0");
-            const numFries = prompt("How many french fries do you want?", "0");
-            const numSoda = prompt("How many sodas do you want?", "0");
+        <script>
+            "use strict";
 
-            // add item costs and their subtotal to the receipt
-            const order = [
-                ["Hotdog", numDogs * HOTDOG, numDogs], 
-                ["French Fries", numFries * FRIES, numFries],
-                ["Soda", numSoda * DRINK, numSoda]
-            ];
-            let subtotal = 0;
-            for (const [item, cost, qty] of order) {
-                if (qty !== "0") {
-                    newReceiptRow(item, cost, qty);
-                    subtotal += cost;
+            window.onload = function() {
+                // get quantities per item from user
+                const numDogs = prompt("How many hotdogs do you want?", "0");
+                const numFries = prompt("How many french fries do you want?", "0");
+                const numSoda = prompt("How many sodas do you want?", "0");
+
+                // add item costs and their subtotal to the receipt
+                let subtotal = 0;
+                let receiptRows = "";
+                const order = [
+                    ["Hotdog", numDogs * HOTDOG, numDogs], 
+                    ["French Fries", numFries * FRIES, numFries],
+                    ["Soda", numSoda * DRINK, numSoda]
+                ];
+                for (const [item, cost, qty] of order) {
+                    if (qty !== "0") {
+                        receiptRows += newReceiptRow(item, cost, qty);
+                        subtotal += cost;
+                    }
+                }            
+                receiptRows += newReceiptRow("Subtotal Before Discount", subtotal);
+
+                // calculate discount and update subtotal if the order qualifies
+                let discount = 0;
+                if (subtotal >= DISCOUNT_THRESHOLD) {
+                    discount = DISCOUNT_RATE * subtotal;
+                    subtotal -= discount;
                 }
-            }            
-            newReceiptRow("Subtotal Before Discount", subtotal);
 
-            // calculate discount and update subtotal if the order qualifies
-            let discount = 0;
-            if (subtotal >= DISCOUNT_THRESHOLD) {
-                discount = DISCOUNT_RATE * subtotal;
-                subtotal -= discount;
-            }
+                // calculate final total after tax
+                const taxAmount = TAX_RATE * subtotal;
+                const final = taxAmount + subtotal;
 
-            // calculate final total after tax
-            const taxAmount = TAX_RATE * subtotal;
-            const final = taxAmount + subtotal;
+                receiptRows += newReceiptRow("Discount", discount) +
+                    newReceiptRow("Subtotal After Discount", subtotal) +
+                    newReceiptRow("Tax", taxAmount) + 
+                    newReceiptRow("Final Total", final); 
 
-            newReceiptRow("Discount", discount);
-            newReceiptRow("Subtotal After Discount", subtotal);
-            newReceiptRow("Tax", taxAmount);
-            newReceiptRow("Final Total", final);            
+                document.getElementById("receipt").innerHTML += receiptRows;
+            };           
         </script>
     </body>
 </html>
