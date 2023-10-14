@@ -4,9 +4,11 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js" integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="style.css" />
         <title>Tic Tac Toe</title>
         <style>
+            body {
+                font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+            }
             h1 {
                 margin-top: 100px;
                 text-align: center;
@@ -20,7 +22,7 @@
                 background-color: #d3d3d3;
                 text-align: center;
                 font-size: 20px;
-                padding-top: 8px;
+                padding-top: 6px;
             }
             .grid {
                 display: flex;
@@ -38,13 +40,31 @@
                 box-sizing: border-box;
                 width: 150px;
                 height: 90px;
-                background-color: bisque;
+                background-color: #e6f3e9;
                 text-align: center;
                 padding-top: 30px;
-                font-size: 30px;
-                font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
+                font-size: 34px;
             }
-            
+            .square:hover {
+                cursor: pointer;
+            }
+            #again-btn {
+                text-align: center;
+                font-size: 24px;
+                display: none;
+                margin: 0 auto;
+                margin-top: 20px;
+                box-sizing: border-box;
+                border-radius: 10px;
+                background-color: #fcdca8;
+                width: 300px;
+                padding: 10px 0px;
+            }
+            #again-btn:hover {
+                cursor: pointer;
+                background-color: #ab884f;
+                color: white;
+            }
         </style>
         <script>
             function switchPlayer() {
@@ -56,99 +76,115 @@
                 return nextTurn;
             }
 
-            function horizontalWin(player, fixedRow, board) {
-                for (let c = 0; c <= 2; c++) {
-                    if (board[fixedRow][c] !== player) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            function verticalWin(player, fixedCol, board) {
-                for (let r = 0; r <= 2; r++) {
-                    if (board[fixedCol][r] !== player) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-            
-
-            function diagonalWin(player, board) {
-                diag1 = true, diag2 = true;
-                for (let idx = 0; idx <= 2; idx++) {
-                    // check top left to bottom right
-                    if (diag1 && board[idx][idx] !== player) {
-                        diag1 = false;
-                    }
-                    // check top right to bottom left
-                    if (diag2 && board[idx][2 - idx] !== player) {
-                        diag2 = false;
-                    }
-                }
-
-                return diag1 || diag2;
-            }
-
-            function isWinner(player, row, col, board) {
+            function isWinner(player, row, col, gameState) {
+                // the winning pattern is XXX or OOO, depending on who just played
                 const win = player.repeat(3);
-                return (horizontalWin(player, row, board) || 
-                        verticalWin(player, col, board) || 
-                        diagonalWin(player, board));
+
+                let diag1 = ""; // to check the diagonal from top left to bottom right
+                let diag2 = ""; // to check the diagonal from top right to bottom left
+                let horiz = ""; // to check the row that was just clicked
+                let vert = "";  // to check the column that was just clicked
+
+                // make stringified version of row, column, and diagonals
+                for (let idx = 0; idx <= 2; idx++) {
+                    diag1 += gameState[idx][idx];
+                    diag2 += gameState[idx][2 - idx];
+                    horiz += gameState[row][idx];
+                    vert += gameState[idx][col];
+                }
+
+                return (diag1 === win || diag2 === win || horiz === win || vert === win);
             }
 
-            function gameOver(board) {
-                for (let row of board) {
+            function isStalemate(gameState) {
+                // if there are still non-claimed cells, not a stalemate
+                for (const row of gameState) {
+                    for (const cell of row) {
+                        if (!(cell === "X" || cell === "O")) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            function gameOver(gameState, message) {
+                $(".turn-display").html(message);          // display message about reason for game over
+                $(".square").css("pointer-events","none"); // prevent any more squares being clicked
+                $("#again-btn").css("display", "block");   // make the Play Again button visible
+            }
+
+            // randomly pick either 0 (player O goes first) or 1 (player X goes first)
+            function pickFirstPlayer() {
+                $(".turn-display").html("Player <span id='player'></span> turn");
+                // randomly pick who plays first
+                const firstPlayer = Math.floor(Math.random() * 2) == 0 ? "O" : "X";
+                // write who's turn it is in the display
+                $("#player").text(firstPlayer);
+                return firstPlayer;
+            }
+
+            function resetGame(gameState) {
+                // reset all cells
+                for (let row of gameState) {
                     row.fill(0);
                 }
                 $(".square").text("");
+
+                // make all squares clickable again
+                $(".square").css("pointer-events","auto");
+
+                return pickFirstPlayer();
             }
+
+            function buildGrid() {
+                // populate the grid html with square cells
+                let cells = "";
+                for (let row = 0; row <= 2; row++) {
+                    for (let col = 0; col <= 2; col++) {
+                        const id = `r${row}c${col}`;
+                        cells += "<div class='square' id='" + id + "'></div>";
+                    }
+                }
+                $(".grid").html(cells);
+
+                // create the 2D array to represent the game state internally
+                return Array.from(new Array(3), () => new Array(3));
+            }            
         </script>
     </head>
     <body>
         <h1>Tic Tac Toe - Let's Go!</h1>
-        <div class="turn-display">Player 
-            <span id="player"></span> turn
-        </div>
+        <div class="turn-display"></div>
+        <div class="grid"></div>
+        <p id="again-btn">Play again</p>
+
         <script>
-            document.write("<div class='grid'>");
-            for (let row = 0; row <= 2; row++) {
-                for (let col = 0; col <= 2; col++) {
-                    const id = `r${row}c${col}`;
-                    document.write("<div class='square' id='" + id + "'></div>");
-                }
-            }
-            document.write("</div>");
-
-            // randomly pick either 0 (player O goes first) or 1 (player X goes first)
-            let currPlayer = Math.floor(Math.random() * 2) == 0 ? "O" : "X";
-            $("#player").text(currPlayer);
-
-            // create a 2D array to represent the game board status
-            const claimedSquares = Array.from(new Array(3), () => new Array(3));
+            const gridState = buildGrid();
+            let currPlayer = pickFirstPlayer();
 
             $(".square").click(function(e) {
-                // check that the square hasn't been claimed already
-                if ($(this).text() == "") {
-                    // display the player's symbol on the clicked square
-                    $(this).text(currPlayer);
-                    // update game board status
-                    const id = $(this).attr("id");
-                    const row = id[1];
-                    const col = id[3];
-                    claimedSquares[row][col] = currPlayer;
-                    // console.log("id: " + id + " row: " + row + " col: " + col)
-                    if (isWinner(currPlayer, row, col, claimedSquares)) {
-                        gameOver(claimedSquares);
-                        console.log("you win!");
-                    }
+                $(this).text(currPlayer);             // write symbol on the clicked square
+                $(this).css("pointer-events","none"); // prevent this square from being clicked again
+
+                const id = $(this).attr("id");
+                const row = id[1];
+                const col = id[3];
+                gridState[row][col] = currPlayer;     // update internal game state
+
+                if (isWinner(currPlayer, row, col, gridState)) {
+                    gameOver(gridState, "Player " + currPlayer + " wins!");
+                } else if (isStalemate(gridState)) {
+                    gameOver(gridState, "Stalemate: game over");
+                } else {
                     currPlayer = switchPlayer();
                 }
-            })
+            });
 
-            // switchPlayer();
-            
+            $("#again-btn").click(function(e) {
+                currPlayer = resetGame(gridState);
+                $(this).css("display", "none"); // hide the button once new game starts
+            });
         </script>
     </body>
 </html>
