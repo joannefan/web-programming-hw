@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Waterfall Slideshow</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <style type="text/css">
+            body {
+                text-align: center;
+                font-family: Georgia, Times, 'Times New Roman', serif;
+            }
+            h1 {
+                color: #557a7a;
+                margin-top: 40px;
+            }
+            #slides-wrapper{
+                display: block;
+                border: 4px solid #557a7a;
+                height: 500px;
+                width: 330px;
+                overflow: hidden;
+                margin: 0 auto;
+            }
+            img {
+                height: 500px;
+                width: 330px;
+            }
+            input[type="button"] {
+                display: inline-block;
+                padding: 8px 30px;
+                margin: 10px;
+                font-size: 20px;
+                font-family: Georgia, Times, 'Times New Roman', serif;
+                background-color: #c0d5d5;
+                border: 2px solid #557a7a;
+                border-radius: 10px;
+            }
+            input[type="button"]:hover {
+                background-color: #7daaab;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Waterfall Slideshow</h1>
+        <div id='slides-wrapper'>
+            <img src="images/waterfall1.jpeg"/>
+        </div>
+        <input type="button" id="startSlides" value="Start">
+        <input type="button" id="stopSlides" value="Stop">
+
+        <script language="javascript">
+            const images = ["waterfall1.jpeg", "waterfall2.jpeg", "waterfall3.jpeg", "waterfall4.jpeg", "waterfall5.jpeg"];
+            let imgIndex = 0;
+	
+            $(document).ready(function() {
+                $("#startSlides").click(slideShow);
+                $("#stopSlides").click(function() {
+                        $("img").stop().fadeIn();
+                    }
+                );
+            })
+
+            function slideShow() {
+            	$("img").fadeOut(1600, nextSlide);
+            }
+
+            function nextSlide() {
+            	imgIndex = (imgIndex + 1) % images.length;
+            	$("img").attr("src", "images/" + images[imgIndex]);
+            	$("img").fadeIn(1600, slideShow);
+            }
+        </script>
+    </body>
+</html>
