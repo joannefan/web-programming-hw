@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Part 1</title>
+        <script>
+            products = {
+                "entries": [
+                    {
+                        "name": "Memory Foam Pillow",
+                        "description": "A contoured memory foam pillow designed to provide optimal support for a restful night's sleep.",
+                        "price": 42.99,
+                        "categories": ["bedding", "pillow"]
+                    },
+                    {
+                        "name": "All-Season Down Comforter",
+                        "description": "A duvet filled with high-quality down, providing the perfect blend of warmth and breathability for year-round comfort.",
+                        "price": 104.99,
+                        "categories": ["bedding", "duvet", "comforter"]
+                    }
+                ]
+            }
+        </script>
+    </head>
+    <body>
+        <div id="json-data">&nbsp;</div>
+        <script>
+            // display the raw data
+            rawStr = JSON.stringify(products);
+            document.getElementById("json-data").innerHTML = rawStr;
+        </script>
+    </body>
+</html>

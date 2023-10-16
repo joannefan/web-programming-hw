@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Part 3</title>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <style type="text/css">
+            
+        </style>
+    </head>
+    <body>
+        <form method="get" action="#">
+            <label>Category: </label>
+            <select name="category" id="select-category"></select><br />
+            <input type="submit" value="Filter" id="filter-btn"/>
+        </form>
+	    <div id="json-list">&nbsp;</div>
+
+        <script>
+
+            $.get("products.json", function(data) {
+                let options = [];
+                data.entries.forEach(function(entry) {
+                    options.push(...entry.categories);
+                });
+                options = new Set(options); // remove duplicates
+
+                // populate dropdown box
+                let optionsHTML = "";
+                for (const option of options) {
+                    optionsHTML += "<option value='" + option + "'>" + option + "</option>";
+                }
+                $("#select-category").html(optionsHTML);
+
+                $("#filter-btn").click(function() {
+                    var picked = "bedding";
+                    $('#select-category').change(function() {
+                        picked = $(this).val();
+                    });
+
+                    let names = "<ul>";
+                    data.entries.forEach(function(entry) {
+                        if (entry.categories.includes(picked)) {
+                            names += "<li>" + entry.name + "</li>";
+                        }
+                    }) 
+                    names += "</ul>";
+                    $("#json-list").html(names);
+                })
+            });
+        </script>
+    </body>
+</html>

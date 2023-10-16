@@ -1,0 +1,18 @@
+{
+    "entries": [
+        {
+            "name": "Memory Foam Pillow",
+            "description": "A contoured memory foam pillow designed to provide optimal support for a restful night's sleep.",
+            "price": 42.99,
+            "sizes": ["Standard", "Large"],
+            "categories": ["bedding", "pillow"]
+        },
+        {
+            "name": "All-Season Down Comforter",
+            "description": "A duvet filled with high-quality down, providing the perfect blend of warmth and breathability for year-round comfort.",
+            "price": 104.99,
+            "sizes": ["Full", "Queen"],
+            "categories": ["bedding", "duvet", "comforter"]
+        }
+    ]
+}

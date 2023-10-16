@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Part 2</title>
+        <!-- <link href="styles.css" rel="stylesheet" type="text/css" /> -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <style type="text/css">
+            body {
+                width: 100%;
+                background-color: #a1baaf;
+                padding: 30px 0px;
+            }
+            ol {
+                width: 80%;
+                margin: 0 auto;
+            }
+            ol, ul {
+                list-style-type: none;
+                padding-left: 0px;
+            }
+            ol .product {
+                display: block;
+                box-sizing: border-box;
+                border-radius: 10px;
+                width: 100%;
+                margin-bottom: 60px;
+                line-height: 1.6em;
+                background-color: #d0dcd7;
+                font-family: Georgia, 'Times New Roman', Times, serif;
+            }
+            /* Name styling */
+            ul li:first-child {
+                display: block;
+                color: white;
+                font-size: 30px;
+                font-family: 'Handlee', cursive;
+                background-color: #696d7d;
+                padding: 10px;
+            }
+            /* Description styling */
+            ul li:nth-child(2) {
+                margin: 14px 30px 14px 30px;
+                display: block;
+                font-size: 22px;
+            }
+            /* Price styling */
+            ul li:nth-child(3) {
+                display: block;
+                margin-left: 30px;
+                margin-bottom: 20px;
+                font-size: 26px;
+                font-weight: bold;
+            }
+            /* Sizes styling */
+            ul li:nth-child(4) {
+                display: block;
+                margin: 10px 30px;
+                font-size: 18px;
+            }
+            /* Category styling */
+            ul li:last-child {
+                display: block;
+                margin: 10px 30px;
+                padding-bottom: 10px;
+                font-size: 18px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="json-list">&nbsp;</div>
+        <script>
+            $.get("products.json", function(data) {
+                let DataStr = "<ol>";
+                data.entries.forEach(function(entry) {
+                    let details = "<ul class='product'>";
+                    details += "<li>" + entry.name + "</li>" +
+                                "<li>" + entry.description + "</li>" +
+                                "<li>" + "$" + entry.price + "</li>" +
+                                "<li>" + "SIZES: " + entry.sizes.join(", ") + "</li>" +
+                                "<li>" + "CATEGORIES: " + entry.categories.join(", ") + "</li>";
+                    details += "</ul>";
+
+                    DataStr += "<li>" + details + "</li>";
+                }) 
+                DataStr += "</ol>";
+                document.getElementById("json-list").innerHTML = DataStr;
+            })
+        </script>
+    </body>
+</html>
