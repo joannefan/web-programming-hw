@@ -67,15 +67,30 @@
             }
         </style>
         <script>
-            function switchPlayer() {
-                const player = document.getElementById("player");
-                // update turn display
-                const nextTurn = player.innerText === "O" ? "X" : "O";
-                player.innerText = nextTurn;
+            // Function definitions
+            /**
+             * switches players' turn and updates the display that says 
+             * whose turn it is.
+             * 
+             * @param {string} currTurn - the player that just had a turn.
+             * @return {string} - the player whose turn it is now.
+             */
+            function switchPlayer(currTurn) {
+                const nextTurn = currTurn === "O" ? "X" : "O";
+                document.getElementById("player").innerText = nextTurn;
                 
                 return nextTurn;
             }
 
+            /**
+             * determines whether the most recent turn is a win.
+             * 
+             * @param {string} player - the player who just had a turn.
+             * @param {number} row - row index of the square that the player clicked.
+             * @param {number} col - column index of the square that the player clicked.
+             * @param {Array.<Array.<string>>} gameState - 2D array that represents the game state.
+             * @return {boolean} - true if the player won, otherwise false.
+             */
             function isWinner(player, row, col, gameState) {
                 // the winning pattern is XXX or OOO, depending on who just played
                 const win = player.repeat(3);
@@ -96,8 +111,14 @@
                 return (diag1 === win || diag2 === win || horiz === win || vert === win);
             }
 
+            /**
+             * checks whether all squares are occupied (stalemate).
+             * 
+             * @param {Array.<Array.<string>>} gameState - 2D array that represents the game state.
+             * @return {boolean} - true if the game is at a stalemate, otherwise false.
+             */
             function isStalemate(gameState) {
-                // if there are still non-claimed cells, not a stalemate
+                // if there are still non-occupied cells, not a stalemate
                 for (const row of gameState) {
                     for (const cell of row) {
                         if (!(cell === "X" || cell === "O")) {
@@ -108,37 +129,64 @@
                 return true;
             }
 
+            /**
+             * terminates the current game and makes the Play Again button appear.
+             * 
+             * @param {Array.<Array.<string>>} gameState - 2D array that represents the game state.
+             * @param {string} message - Message to display about how the game ended.
+             */
             function gameOver(gameState, message) {
-                $(".turn-display").html(message);          // display message about reason for game over
-                $(".square").css("pointer-events","none"); // prevent any more squares being clicked
-                $("#again-btn").css("display", "block");   // make the Play Again button visible
+                $(".turn-display").html(message);          // display message about how game ended
+                $(".square").css("pointer-events","none"); // prevent squares being clicked
+                $("#again-btn").css("display", "block");   // make Play Again button visible
             }
 
-            // randomly pick either 0 (player O goes first) or 1 (player X goes first)
+            /**
+             * randomly picks which player gets the first turn.
+             * 
+             * @return {string} - The player who gets the first turn.
+             */
             function pickFirstPlayer() {
                 $(".turn-display").html("Player <span id='player'></span> turn");
-                // randomly pick who plays first
+
+                // randomly pick who plays first: 0 (player O) or 1 (player X)
                 const firstPlayer = Math.floor(Math.random() * 2) == 0 ? "O" : "X";
-                // write who's turn it is in the display
+                // display who's turn it is
                 $("#player").text(firstPlayer);
+
                 return firstPlayer;
             }
 
+            /**
+             * resets for a new game, both internally and in the visible grid.
+             * 
+             * @param {Array.<Array.<string>>} gameState - 2D array that represents the game state.
+             * @return {string} - which player gets the first turn.
+             */
             function resetGame(gameState) {
-                // reset all cells
+                // reset internal representation of game state
                 for (let row of gameState) {
                     row.fill(0);
                 }
-                $(".square").text("");
 
+                // clear the visible squares that the user sees
+                $(".square").text("");
                 // make all squares clickable again
                 $(".square").css("pointer-events","auto");
+
+                // hide the Play Again button
+                $("#again-btn").css("display", "none");
 
                 return pickFirstPlayer();
             }
 
+            /**
+             * builds up the grid of squares and the game state initially.
+             * 
+             * @return {Array.<Array.<string>>} - 3 x 3 array to represent the game state internally.
+             */
             function buildGrid() {
-                // populate the grid html with square cells
+                // populate the visible grid with square cells
                 let cells = "";
                 for (let row = 0; row <= 2; row++) {
                     for (let col = 0; col <= 2; col++) {
@@ -148,7 +196,6 @@
                 }
                 $(".grid").html(cells);
 
-                // create the 2D array to represent the game state internally
                 return Array.from(new Array(3), () => new Array(3));
             }            
         </script>
@@ -177,13 +224,12 @@
                 } else if (isStalemate(gridState)) {
                     gameOver(gridState, "Stalemate: game over");
                 } else {
-                    currPlayer = switchPlayer();
+                    currPlayer = switchPlayer(currPlayer);
                 }
             });
 
             $("#again-btn").click(function(e) {
                 currPlayer = resetGame(gridState);
-                $(this).css("display", "none"); // hide the button once new game starts
             });
         </script>
     </body>
