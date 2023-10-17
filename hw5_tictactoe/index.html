@@ -67,7 +67,49 @@
             }
         </style>
         <script>
+            // Constants
+            // Each square has its row and col stored in its id. 
+            // These indices tell where in the id string we can find this info
+            const ROW_IDX = 1;
+            const COL_IDX = 3;
+
             // Function definitions
+            /**
+             * builds up the grid of squares and the game state initially.
+             * 
+             * @return {Array.<Array.<string>>} - 3 x 3 array to represent 
+             *                                    the game state internally.
+             */
+             function buildGrid() {
+                // populate the visible grid with square cells
+                let cells = "";
+                for (let row = 0; row <= 2; row++) {
+                    for (let col = 0; col <= 2; col++) {
+                        const id = `r${row}c${col}`;
+                        cells += "<div class='square' id='" + id + "'></div>";
+                    }
+                }
+                $(".grid").html(cells);
+
+                return Array.from(new Array(3), () => new Array(3));
+            }
+
+            /**
+             * randomly picks which player gets the first turn.
+             * 
+             * @return {string} - The player who gets the first turn.
+             */
+             function pickFirstPlayer() {
+                $(".turn-display").html("Player <span id='player'></span> turn");
+
+                // randomly pick who plays first: 0 (player O) or 1 (player X)
+                const firstPlayer = Math.floor(Math.random() * 2) == 0 ? "O" : "X";
+                // display who's turn it is
+                $("#player").text(firstPlayer);
+
+                return firstPlayer;
+            }
+
             /**
              * switches players' turn and updates the display that says 
              * whose turn it is.
@@ -88,7 +130,8 @@
              * @param {string} player - the player who just had a turn.
              * @param {number} row - row index of the square that the player clicked.
              * @param {number} col - column index of the square that the player clicked.
-             * @param {Array.<Array.<string>>} gameState - 2D array that represents the game state.
+             * @param {Array.<Array.<string>>} gameState - 2D array that 
+             *                                      represents the game state.
              * @return {boolean} - true if the player won, otherwise false.
              */
             function isWinner(player, row, col, gameState) {
@@ -114,8 +157,10 @@
             /**
              * checks whether all squares are occupied (stalemate).
              * 
-             * @param {Array.<Array.<string>>} gameState - 2D array that represents the game state.
-             * @return {boolean} - true if the game is at a stalemate, otherwise false.
+             * @param {Array.<Array.<string>>} gameState - 2D array that 
+             *                                      represents the game state.
+             * @return {boolean} - true if the game is at a stalemate, 
+             *                                      otherwise false.
              */
             function isStalemate(gameState) {
                 // if there are still non-occupied cells, not a stalemate
@@ -132,35 +177,21 @@
             /**
              * terminates the current game and makes the Play Again button appear.
              * 
-             * @param {Array.<Array.<string>>} gameState - 2D array that represents the game state.
+             * @param {Array.<Array.<string>>} gameState - 2D array that 
+             *                                  represents the game state.
              * @param {string} message - Message to display about how the game ended.
              */
             function gameOver(gameState, message) {
-                $(".turn-display").html(message);          // display message about how game ended
+                $(".turn-display").html(message);          // display message
                 $(".square").css("pointer-events","none"); // prevent squares being clicked
                 $("#again-btn").css("display", "block");   // make Play Again button visible
             }
 
             /**
-             * randomly picks which player gets the first turn.
-             * 
-             * @return {string} - The player who gets the first turn.
-             */
-            function pickFirstPlayer() {
-                $(".turn-display").html("Player <span id='player'></span> turn");
-
-                // randomly pick who plays first: 0 (player O) or 1 (player X)
-                const firstPlayer = Math.floor(Math.random() * 2) == 0 ? "O" : "X";
-                // display who's turn it is
-                $("#player").text(firstPlayer);
-
-                return firstPlayer;
-            }
-
-            /**
              * resets for a new game, both internally and in the visible grid.
              * 
-             * @param {Array.<Array.<string>>} gameState - 2D array that represents the game state.
+             * @param {Array.<Array.<string>>} gameState - 2D array that 
+             *                                      represents the game state.
              * @return {string} - which player gets the first turn.
              */
             function resetGame(gameState) {
@@ -179,25 +210,6 @@
 
                 return pickFirstPlayer();
             }
-
-            /**
-             * builds up the grid of squares and the game state initially.
-             * 
-             * @return {Array.<Array.<string>>} - 3 x 3 array to represent the game state internally.
-             */
-            function buildGrid() {
-                // populate the visible grid with square cells
-                let cells = "";
-                for (let row = 0; row <= 2; row++) {
-                    for (let col = 0; col <= 2; col++) {
-                        const id = `r${row}c${col}`;
-                        cells += "<div class='square' id='" + id + "'></div>";
-                    }
-                }
-                $(".grid").html(cells);
-
-                return Array.from(new Array(3), () => new Array(3));
-            }            
         </script>
     </head>
     <body>
@@ -207,29 +219,31 @@
         <p id="again-btn">Play again</p>
 
         <script>
-            const gridState = buildGrid();
-            let currPlayer = pickFirstPlayer();
+            $(document).ready(function() {
+                const gridState = buildGrid();
+                let currPlayer = pickFirstPlayer();
 
-            $(".square").click(function(e) {
-                $(this).text(currPlayer);             // write symbol on the clicked square
-                $(this).css("pointer-events","none"); // prevent this square from being clicked again
+                $(".square").click(function(e) {
+                    $(this).text(currPlayer);             // write symbol on the clicked square
+                    $(this).css("pointer-events","none"); // prevent being clicked again
 
-                const id = $(this).attr("id");
-                const row = id[1];
-                const col = id[3];
-                gridState[row][col] = currPlayer;     // update internal game state
+                    const id = $(this).attr("id");        // get the square's indices from id
+                    const row = id[ROW_IDX];
+                    const col = id[COL_IDX];
+                    gridState[row][col] = currPlayer;     // update internal game state
 
-                if (isWinner(currPlayer, row, col, gridState)) {
-                    gameOver(gridState, "Player " + currPlayer + " wins!");
-                } else if (isStalemate(gridState)) {
-                    gameOver(gridState, "Stalemate: game over");
-                } else {
-                    currPlayer = switchPlayer(currPlayer);
-                }
-            });
+                    if (isWinner(currPlayer, row, col, gridState)) {
+                        gameOver(gridState, "Player " + currPlayer + " wins!");
+                    } else if (isStalemate(gridState)) {
+                        gameOver(gridState, "Stalemate: game over");
+                    } else {
+                        currPlayer = switchPlayer(currPlayer);
+                    }
+                });
 
-            $("#again-btn").click(function(e) {
-                currPlayer = resetGame(gridState);
+                $("#again-btn").click(function(e) {
+                    currPlayer = resetGame(gridState);
+                });
             });
         </script>
     </body>
