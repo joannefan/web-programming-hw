@@ -13,6 +13,48 @@
             "price": 104.99,
             "sizes": ["Full", "Queen"],
             "categories": ["bedding", "duvet", "comforter"]
+        },
+        {
+            "name": "Cotton Bed Sheet Set",
+            "description": "A soft and hypoallergenic 100% cotton bed sheet set (1 fitted sheet, 1 flat sheet, 2 pillowcases).",
+            "price": "49.99",
+            "sizes": ["Twin XL", "Full"],
+            "categories": ["bedding", "sheets"]
+        },
+        {
+            "name": "Microfiber Bed Sheet Set",
+            "description": "A luxurious microfiber bed sheet set that is silky soft, hypoallergenic, and resistant to wrinkles (1 fitted sheet, 1 flat sheet, 2 pillowcases).",
+            "price": 29.99,
+            "sizes": ["Twin", "King"],
+            "categories": ["bedding", "sheets"]
+        },
+        {
+            "name": "Mattress Protector",
+            "description": "A waterproof and breathable mattress protector that safeguards your mattress from spills, stains, and allergens.",
+            "price": 23.99,
+            "sizes": ["Twin XL", "Queen"],
+            "categories": ["bedding", "accessory"]
+        },
+        {
+            "name": "Satin Silk Pillowcase",
+            "description": "A satin silk pillowcase designed to reduce friction and hair breakage, while keeping your skin moisturized and refreshed throughout the night.",
+            "price": 24.99,
+            "sizes": ["Standard", "Queen", "King"],
+            "categories": ["bedding", "pillow"]
+        },
+        {
+            "name": "Mulberry Silk Pillowcase",
+            "description": "A luxurious silk pillowcase made from 100% pure mulberry silk, guaranteed to be smooth and gentle on the skin and hair.",
+            "price": 37.99,
+            "sizes": ["Standard", "King"],
+            "categories": ["bedding", "pillow"]
+        },
+        {
+            "name": "Animal-themed Crib Bedding Set",
+            "description": "A crib bedding set featuring fun animal designs to brighten up any nursery, 100% cotton with thread count 400.",
+            "price": 58.99,
+            "sizes": ["Crib (Standard)"],
+            "categories": ["bedding", "sheets", "nursery"]
         }
     ]
 }

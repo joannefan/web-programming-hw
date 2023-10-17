@@ -5,13 +5,59 @@
         <title>Part 3</title>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <style type="text/css">
-            
+            body {
+                width: 80%;
+                height: 100%;
+                text-align: center;
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                background-color: blanchedalmond;
+                margin: 0 auto;
+            }
+            form {
+                display: block;
+                padding-top: 20px;
+                font-size: 24px;
+            }
+            select {
+                font-size: 18px;
+                width: 130px;
+                margin-top: 10px;
+                margin-bottom: 20px;
+                text-align: center;
+                font-family: Georgia, 'Times New Roman', Times, serif;
+            }
+            input[type="submit"] {
+                display: inline-block;
+                font-size: 20px;
+                font-family: Georgia, 'Times New Roman', Times, serif;
+                color: #634417;
+                padding: 5px 20px;
+                margin-bottom: 40px;
+                border: 2px solid #c09559;
+                background-color: #e6c08c;
+            }
+            input[type="submit"]:hover {
+                background-color: #fae9d0;
+            }
+            ul {
+                list-style: none;
+                padding-left: 0px;
+            }
+            ul li {
+                line-height: 2em;
+                font-size: 18px;
+            }
+            p {
+                font-size: 24px;
+                color: #805a26;
+            }
         </style>
     </head>
     <body>
-        <form method="get" action="#">
-            <label>Category: </label>
-            <select name="category" id="select-category"></select><br />
+        <!-- method="get" action="#" -->
+        <form>
+            <label>Pick a category: </label><br />
+            <select name="category" id="pick-category"></select><br />
             <input type="submit" value="Filter" id="filter-btn"/>
         </form>
 	    <div id="json-list">&nbsp;</div>
@@ -30,24 +76,55 @@
                 for (const option of options) {
                     optionsHTML += "<option value='" + option + "'>" + option + "</option>";
                 }
-                $("#select-category").html(optionsHTML);
+                $("#pick-category").html(optionsHTML);
 
-                $("#filter-btn").click(function() {
-                    var picked = "bedding";
-                    $('#select-category').change(function() {
-                        picked = $(this).val();
-                    });
+                $("#filter-btn").click(function(e) {
+                    // prevent default form submission behavior which reloads the page
+                    e.preventDefault();
 
-                    let names = "<ul>";
+                    var picked = $('#pick-category').val();
+                    let names = "<p>MATCHING PRODUCTS:</p><ul>";
                     data.entries.forEach(function(entry) {
                         if (entry.categories.includes(picked)) {
                             names += "<li>" + entry.name + "</li>";
                         }
-                    }) 
+                    })
                     names += "</ul>";
+
                     $("#json-list").html(names);
                 })
             });
         </script>
     </body>
 </html>
+
+<!-- 
+    // {
+        //     "name":,
+        //     "description":,
+        //     "price":,
+        //     "sizes":,
+        //     "categories":
+        // },
+        // {
+        //     "name":,
+        //     "description":,
+        //     "price":,
+        //     "sizes":,
+        //     "categories":
+        // },
+        // {
+        //     "name":,
+        //     "description":,
+        //     "price":,
+        //     "sizes":,
+        //     "categories":
+        // },
+        // {
+        //     "name":,
+        //     "description":,
+        //     "price":,
+        //     "sizes":,
+        //     "categories":
+        // }
+ -->
