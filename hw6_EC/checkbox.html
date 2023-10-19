@@ -39,7 +39,7 @@
             <input type="checkbox" name="box" id="chk3" value="third"><label for="chk3">third</label><br />
             <input type="checkbox" name="box" id="chk4" value="fourth"><label for="chk4">fourth</label><br />
         </form>
-        <script language="javascript">
+        <script>
             "use strict";
 
             function unify(checkStatus) {
@@ -52,7 +52,7 @@
             // by default, all checkboxes are unchecked
             unify(false);
             
-            // let mainChk be the "check all" checkbox that can control other checkboxes
+            // mainChk is the "check all" checkbox that can control other checkboxes
             const mainChk = document.getElementById("chkAll");
 
             mainChk.onclick = () => {
@@ -60,7 +60,7 @@
                 // update the label of mainChk
                 const label = document.getElementById("chkAllLabel");
                 label.innerText = isChecked ? "Uncheck All" : "Check All";
-                // make all other checkboxes same as mainChk - either all checked, or all not
+                // make all other checkboxes same as mainChk
                 unify(isChecked);
             };
         </script>

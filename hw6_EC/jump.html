@@ -38,15 +38,19 @@
                 border: 2px solid rgb(142, 43, 25);
                 background-color: rgb(213, 211, 211);
             }
+            button:hover {
+                cursor: pointer;
+                background-color: rgb(209, 195, 169);
+            }
         </style>
     </head>
     <body>
-        <form action="#" method="get">
+        <form>
             <input type="text" id="leftInput" name="leftInput">
             <button type="button" id="btn">JUMP ></button>
             <input type="text" id="rightInput" name="rightInput"> 
         </form>
-        <script language="javascript">
+        <script>
             "use strict";
 
             function moveText(sourceID, destID) {
