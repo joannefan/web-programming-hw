@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+<head>
+	<title>JSON Demo</title>
+	<meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #135660;
+        }
+        h1 {
+            margin-top: 50px;
+            color: white;
+            text-align: center;
+        }
+        #messages {
+            display: block;
+            font-size: 20px;
+            width: 90%;
+            margin: 0 auto;
+            /* text-align: center;
+            align-items: center; */
+        }
+        .title, .details {
+            text-align: center;
+            display: block;
+            font-size: 22px;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            padding: 20px;
+            line-height: 1.7em;
+            margin: 0px auto;
+            width: 700px;
+        }
+        .title {
+            margin-top: 50px;
+            background-color: #eeefd1;
+        }
+        .details {
+            display: block;
+            background-color: #cfa668;
+            pointer-events: all;
+        }
+        .details:hover {
+            cursor: pointer;
+        }
+        .book {
+            display: block;
+        }
+    </style>
+	<script>
+        function formatTitle(title) {
+            const words = title.split(' ');
+  
+            for (let i = 0; i < words.length; i++) {
+                const original = words[i];
+                if (original.length > 2) {
+                    words[i] = original[0].toUpperCase() + original.substring(1);
+                }
+            }
+            
+            return words.join(' ');
+        }
+
+		function loadMessages() {
+			/* Step 1: Make instance of XHR object...
+			...to make HTTP request after page is loaded */
+			request = new XMLHttpRequest();
+			console.log("1: created request");
+ 
+		    // Step 2: Open the JSON file at remote location
+            const isbn = [
+            "9781514638811",
+            "0440998050",
+            "9780370332284",
+            "9780060234980",
+            "9780064408677",
+            "9780810993136",
+            "9781419741869",
+            "9781419741876",
+            ]
+            let bookIDs = isbn.join(",ISBN:");
+            const apiUrl = `https://openlibrary.org/api/books?bibkeys=ISBN:${bookIDs}&jscmd=data&format=json`;
+            console.log(apiUrl)
+
+			request.open("GET", apiUrl, true);
+			console.log("2: open success");
+ 	
+			// Step 3: set up callback for when HTTP response is returned (i.e., you get the JSON file back)
+
+			request.onreadystatechange = function() {
+				console.log("3:  event fired");			
+ 
+				if (request.readyState == 4 && request.status == 200) {
+					console.log("5:  data is ready");
+					const rawData = request.responseText;
+					const catalogue = JSON.parse(rawData);
+
+                    dataHTML = "";
+                    for (const id in catalogue) {
+                        console.log(catalogue[id].identifiers)
+                        const ids = Object.entries(catalogue[id].identifiers)
+                            .map(([id, num]) => `${id}: ${num}`).join("<br />");
+
+                        dataHTML += "<div class='book'>" + 
+                            "<div class='title'>" + formatTitle(catalogue[id].title) + "</div>" + 
+                            "<div class='details'>" + 
+                                "Author: " + catalogue[id].authors[0].name + "<br />" +
+                                catalogue[id].number_of_pages + " pages" + "<br />" +
+                                "Published " + catalogue[id].publish_date + "<br />" +
+                                ids + "</div>" +
+                            "</div>";
+                    }
+
+					document.getElementById("messages").innerHTML = dataHTML;
+
+				} else if (request.readyState == 4 && request.status != 200) {
+					document.getElementById("messages").innerHTML = "Whoops, something went terribly wrong!";
+				}
+
+				else if (request.readyState == 3) {
+					console.log("6:  ready state 3- request received,data being sent");
+					document.getElementById("messages").innerHTML = "Come back soon!";
+				}
+
+			}
+
+		    // Step 4: fire off the HTTP request
+			request.send();
+			console.log("4 request sent");
+		}
+
+        $(document).ready(function() {
+            loadMessages();
+        });
+	</script>
+</head>
+
+<body>
+	<h1>Fun Children's Books</h1>
+	<div id="messages">Loading...</div>
+</body>
+</html>
