@@ -1,8 +1,8 @@
 <!doctype html>
 <html>
 <head>
-	<title>Books Catalog</title>
-	<meta charset="utf-8" />
+    <title>Books Catalog</title>
+    <meta charset="utf-8" />
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <style type="text/css">
         body {
@@ -72,7 +72,7 @@
             font-family: 'Courier New', Courier, monospace;
         }
     </style>
-	<script>
+    <script>
         // the books I want to get info about, the identifier being their ISBN
         const isbn = [
             "9781514638811",
@@ -111,13 +111,13 @@
         /**
          * Makes an API request and displays the result on the page.
          */
-		function loadresults() {
-			request = new XMLHttpRequest();
-			request.open("GET", apiUrl, true);
-			request.onreadystatechange = function() { 
-				if (request.readyState == 4 && request.status == 200) {
-					const rawData = request.responseText;
-					const catalog = JSON.parse(rawData);
+        function loadresults() {
+            const request = new XMLHttpRequest();
+            request.open("GET", apiUrl, true);
+            request.onreadystatechange = function() { 
+                if (request.readyState == 4 && request.status == 200) {
+                    const rawData = request.responseText;
+                    const catalog = JSON.parse(rawData);
 
                     let dataHTML = "";
                     for (const id in catalog) {
@@ -134,28 +134,25 @@
                             "</div>";
                     }
 
-					$("#results").html(dataHTML);
+                    $("#results").html(dataHTML);
                     $("#explanation").css("display", "block");
+                }
+                else if (request.readyState == 4 && request.status != 200) {
+                    $("#results").html("Something went wrong, sorry!");
+                }
+                else if (request.readyState == 3) {
+                    $("#results").html("Come back soon!");
+                }
+            };
 
-				} else if (request.readyState == 4 && request.status != 200) {
-					$("#results").html("Something went wrong, sorry!");
-				} else if (request.readyState == 3) {
-					$("#results").html("Come back soon!");
-				}
-			};
-
-			request.send();
-		}
-
-        $(document).ready(function() {
-            loadresults();
-        });
-	</script>
+            request.send();
+        }
+    </script>
 </head>
 
 <body>
-	<h1>Fun Children's Books</h1>
-	<div id="results">Loading...</div>
+    <h1>Fun Children's Books</h1>
+    <div id="results">Loading...</div>
     <div id="explanation">
         <ul>
             <li>The API is the Open Library's Books API which allows one to query information about any books that exist in Open Library's catalog.
@@ -171,5 +168,10 @@
                 2. This API can be useful within Open Library for managing their very large database and inventory of books for various purposes. For example, each book comes with some classifications and relevant categories, which would be useful for allowing users to easily browse or search by topic if they don't have a specific book name in mind.</li>
         </ul>
     </div>
+    <script>
+        $(document).ready(function() {
+            loadresults();
+        });
+    </script>
 </body>
 </html>
