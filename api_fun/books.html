@@ -1,35 +1,34 @@
 <!doctype html>
 <html>
 <head>
-	<title>JSON Demo</title>
+	<title>Books Catalog</title>
 	<meta charset="utf-8" />
     <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
-    <style>
+    <style type="text/css">
         body {
             background-color: #135660;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         }
         h1 {
             margin-top: 50px;
             color: white;
             text-align: center;
         }
-        #messages {
-            display: block;
+        #results {
+            display: flex;
+            flex-wrap: wrap;
             font-size: 20px;
             width: 90%;
             margin: 0 auto;
-            /* text-align: center;
-            align-items: center; */
         }
         .title, .details {
             text-align: center;
             display: block;
             font-size: 22px;
-            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
             padding: 20px;
             line-height: 1.7em;
             margin: 0px auto;
-            width: 700px;
+            width: 500px;
         }
         .title {
             margin-top: 50px;
@@ -45,11 +44,59 @@
         }
         .book {
             display: block;
+            margin: 0px 20px;
+        }
+        #explanation {
+            color: white;
+            font-size: 20px;
+            display: none;
+        }
+        a {
+            text-decoration: none;
+            color: #f8efc3;
+            font-style: italic;
+        }
+        a:hover {
+            cursor: pointer;
+            color: #b6a75e;
+        }
+        ul {
+            padding: 30px 120px;
+            font-size: 20px;
+            line-height: 1.8em;
+        }
+        li {
+            margin: 20px 0px;
+        }
+        b {
+            font-family: 'Courier New', Courier, monospace;
         }
     </style>
 	<script>
+        // the books I want to get info about, the identifier being their ISBN
+        const isbn = [
+            "9781514638811",
+            "9780370332284",
+            "0440998050",
+            "9780064408677",
+            "9780060234980",
+            "9780810993136",
+            "9781419741869",
+            "9781419741876",
+        ];
+        const bookIDs = isbn.join(",ISBN:");
+        const apiUrl = `https://openlibrary.org/api/books?bibkeys=ISBN:${bookIDs}&jscmd=data&format=json`;
+
+        // function definitions
+        /**
+         * Capitalizes the first letter of each word in a title according to
+         * conventions (i.e., words longer than 2 characters)
+         *
+         * @param {string} title - The title to be formatted.
+         * @return {string} The correctly formatted title.
+         */
         function formatTitle(title) {
-            const words = title.split(' ');
+            const words = title.split(" ");
   
             for (let i = 0; i < words.length; i++) {
                 const original = words[i];
@@ -58,85 +105,71 @@
                 }
             }
             
-            return words.join(' ');
+            return words.join(" ");
         }
 
-		function loadMessages() {
-			/* Step 1: Make instance of XHR object...
-			...to make HTTP request after page is loaded */
+        /**
+         * Makes an API request and displays the result on the page.
+         */
+		function loadresults() {
 			request = new XMLHttpRequest();
-			console.log("1: created request");
- 
-		    // Step 2: Open the JSON file at remote location
-            const isbn = [
-            "9781514638811",
-            "0440998050",
-            "9780370332284",
-            "9780060234980",
-            "9780064408677",
-            "9780810993136",
-            "9781419741869",
-            "9781419741876",
-            ]
-            let bookIDs = isbn.join(",ISBN:");
-            const apiUrl = `https://openlibrary.org/api/books?bibkeys=ISBN:${bookIDs}&jscmd=data&format=json`;
-            console.log(apiUrl)
-
 			request.open("GET", apiUrl, true);
-			console.log("2: open success");
- 	
-			// Step 3: set up callback for when HTTP response is returned (i.e., you get the JSON file back)
-
-			request.onreadystatechange = function() {
-				console.log("3:  event fired");			
- 
+			request.onreadystatechange = function() { 
 				if (request.readyState == 4 && request.status == 200) {
-					console.log("5:  data is ready");
 					const rawData = request.responseText;
-					const catalogue = JSON.parse(rawData);
+					const catalog = JSON.parse(rawData);
 
-                    dataHTML = "";
-                    for (const id in catalogue) {
-                        console.log(catalogue[id].identifiers)
-                        const ids = Object.entries(catalogue[id].identifiers)
+                    let dataHTML = "";
+                    for (const id in catalog) {
+                        const ids = Object.entries(catalog[id].identifiers)
                             .map(([id, num]) => `${id}: ${num}`).join("<br />");
 
                         dataHTML += "<div class='book'>" + 
-                            "<div class='title'>" + formatTitle(catalogue[id].title) + "</div>" + 
+                            "<div class='title'>" + formatTitle(catalog[id].title) + "</div>" + 
                             "<div class='details'>" + 
-                                "Author: " + catalogue[id].authors[0].name + "<br />" +
-                                catalogue[id].number_of_pages + " pages" + "<br />" +
-                                "Published " + catalogue[id].publish_date + "<br />" +
+                                "By " + catalog[id].authors[0].name + "<br />" +
+                                catalog[id].number_of_pages + " pages" + "<br />" +
+                                "Published " + catalog[id].publish_date + "<br />" +
                                 ids + "</div>" +
                             "</div>";
                     }
 
-					document.getElementById("messages").innerHTML = dataHTML;
+					$("#results").html(dataHTML);
+                    $("#explanation").css("display", "block");
 
 				} else if (request.readyState == 4 && request.status != 200) {
-					document.getElementById("messages").innerHTML = "Whoops, something went terribly wrong!";
+					$("#results").html("Something went wrong, sorry!");
+				} else if (request.readyState == 3) {
+					$("#results").html("Come back soon!");
 				}
+			};
 
-				else if (request.readyState == 3) {
-					console.log("6:  ready state 3- request received,data being sent");
-					document.getElementById("messages").innerHTML = "Come back soon!";
-				}
-
-			}
-
-		    // Step 4: fire off the HTTP request
 			request.send();
-			console.log("4 request sent");
 		}
 
         $(document).ready(function() {
-            loadMessages();
+            loadresults();
         });
 	</script>
 </head>
 
 <body>
 	<h1>Fun Children's Books</h1>
-	<div id="messages">Loading...</div>
+	<div id="results">Loading...</div>
+    <div id="explanation">
+        <ul>
+            <li>The API is the Open Library's Books API which allows one to query information about any books that exist in Open Library's catalog.
+                There are various means of identifying a book, for example by its ISBN. Given any one of these, the API returns information such as the book's title, authors, number of pages, IDs, publication, what categories it falls under in Open Library, and information such as ebook links and cover images is also sometimes available.
+            </li>
+            <li>I found the API on this website: <a href="https://openlibrary.org/dev/docs/api/books">https://openlibrary.org/dev/docs/api/books</a></li>
+            <li>QUERY PARAMETERS:<br />
+                <b>bibkeys</b>, which is a list of keys for books I want to get information about. I use their ISBN but other kinds of ID are also supported.<br />
+                <b>format</b>, which is the format of the response. The default format is a javascript object but I want the other option which is json.<br />
+                <b>jscmd</b>, which decides what information to provide for each matched book key. I used the value "data" for this parameter, but another option would be "viewapi" which provides information such as links to previews of the book.</li>
+            <li>APPLICATIONS:<br />
+                1. This API can be used by ebook or e-commerce websites to get up-to-date details on books and related products for display on websites. For example, fetching book previews, first-lines, and covers through this API could complement purely textual information and thus enhance user experience.<br />
+                2. This API can be useful within Open Library for managing their very large database and inventory of books for various purposes. For example, each book comes with some classifications and relevant categories, which would be useful for allowing users to easily browse or search by topic if they don't have a specific book name in mind.</li>
+        </ul>
+    </div>
 </body>
 </html>
