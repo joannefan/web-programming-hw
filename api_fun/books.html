@@ -3,7 +3,7 @@
 <head>
     <title>Books Catalog</title>
     <meta charset="utf-8" />
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
     <style type="text/css">
         body {
             background-color: #135660;
@@ -65,7 +65,7 @@
             font-size: 20px;
             line-height: 1.8em;
         }
-        li {
+        ul li {
             margin: 20px 0px;
         }
         b {
@@ -109,7 +109,8 @@
         }
 
         /**
-         * Makes an API request and displays the result on the page.
+         * Makes an API request to the open library catalog and displays the 
+         * result (information about books) on the page.
          */
         function loadresults() {
             const request = new XMLHttpRequest();
@@ -120,18 +121,17 @@
                     const catalog = JSON.parse(rawData);
 
                     let dataHTML = "";
-                    for (const id in catalog) {
-                        const ids = Object.entries(catalog[id].identifiers)
+                    for (const book of Object.values(catalog)) {
+                        const ids = Object.entries(book.identifiers)
                             .map(([id, num]) => `${id}: ${num}`).join("<br />");
 
-                        dataHTML += "<div class='book'>" + 
-                            "<div class='title'>" + formatTitle(catalog[id].title) + "</div>" + 
-                            "<div class='details'>" + 
-                                "By " + catalog[id].authors[0].name + "<br />" +
-                                catalog[id].number_of_pages + " pages" + "<br />" +
-                                "Published " + catalog[id].publish_date + "<br />" +
-                                ids + "</div>" +
-                            "</div>";
+                        dataHTML += "<div class='book'>" + "<div class='title'>" + 
+                                    formatTitle(book.title) + "</div>" + 
+                                    "<div class='details'>" + 
+                                    "By " + book.authors[0].name + "<br />" +
+                                    book.number_of_pages + " pages" + "<br />" +
+                                    "Published " + book.publish_date + "<br />" +
+                                    ids + "</div>" + "</div>";
                     }
 
                     $("#results").html(dataHTML);
@@ -159,13 +159,16 @@
                 There are various means of identifying a book, for example by its ISBN. Given any one of these, the API returns information such as the book's title, authors, number of pages, IDs, publication, what categories it falls under in Open Library, and information such as ebook links and cover images is also sometimes available.
             </li>
             <li>I found the API on this website: <a href="https://openlibrary.org/dev/docs/api/books">https://openlibrary.org/dev/docs/api/books</a></li>
-            <li>QUERY PARAMETERS:<br />
-                <b>bibkeys</b>, which is a list of keys for books I want to get information about. I use their ISBN but other kinds of ID are also supported.<br />
-                <b>format</b>, which is the format of the response. The default format is a javascript object but I want the other option which is json.<br />
-                <b>jscmd</b>, which decides what information to provide for each matched book key. I used the value "data" for this parameter, but another option would be "viewapi" which provides information such as links to previews of the book.</li>
+            <li>QUERY PARAMETERS:
+                <ol>
+                    <li><b>bibkeys</b>, which is a list of one or more keys for books I want to get information about. I use their ISBN (so it looks like <b>bibkeys=ISBN:9781514638811,ISBN:9780370332284,...</b>) but other kinds of ID are also supported. </li>
+                    <li><b>format</b>, which is the format of the response. The default format is a javascript object but I want the other option which is json, so I used <b>format=json</b>.</li>
+                    <li><b>jscmd</b>, which decides what information to provide for each matched book key. I used <b>jscmd=data</b>, but another option for the value would be <b>viewapi</b> which provides information such as links to previews of the book.</li>
+                </ol>
+            </li>
             <li>APPLICATIONS:<br />
-                1. This API can be used by ebook or e-commerce websites to get up-to-date details on books and related products for display on websites. For example, fetching book previews, first-lines, and covers through this API could complement purely textual information and thus enhance user experience.<br />
-                2. This API can be useful within Open Library for managing their very large database and inventory of books for various purposes. For example, each book comes with some classifications and relevant categories, which would be useful for allowing users to easily browse or search by topic if they don't have a specific book name in mind.</li>
+                1. This API can be used by ebook or e-commerce websites to get up-to-date details on books and related products for display on websites. For example, fetching book previews, first-lines, and book covers through this API could complement purely textual information and thus enhance user experience.<br />
+                2. This API can be useful within Open Library for managing their very large database and inventory of books for various purposes. For example, books are assigned classifications and categories, which would be useful for allowing users to easily search or filter by topic if they don't have a specific book title in mind.</li>
         </ul>
     </div>
     <script>
