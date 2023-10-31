@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <title>Fibonacci EC</title>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+    <style type="text/css">
+        .fib-result {
+            color: grey;
+        }
+    </style>
+    <script>
+        function loadData() {
+            let len = $("#len").val();
+            let url = "https://joannef.sgedu.site/hw08/fibapi.php?length=" + len;
+            fetch(url)
+                .then(res => res.text())
+                .then (data => 
+                {
+                    console.log(data);
+                    data = JSON.parse(data);
+                    data = data.fibonacci;
+                    seqStr = data.join(", ");
+                    $(".fib-result").text(seqStr);
+                })
+            .catch (error => console.log(error))
+        }
+    </script>
+</head>
+<body>
+    <h1>We Love Fibonacci!</h1>
+	<form>Length of fibonacci sequence: 
+        <input type='text' name='length' id="len"><br>
+        <input type="button" value="Generate!" onclick="loadData()">
+	</form>
+    <div class="fib-result"></div>
+</body>
+</html>
