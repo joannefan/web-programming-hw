@@ -15,15 +15,19 @@
         <?php
             $n = $_GET["n"];
 
-            echo "<p>";
+            if (!is_numeric($n)) {
+                echo 'Error: value of "n" is not a number';
+            } else {
+                echo "<p>";
 
-            $x = 1;
-            while($x <= 12) {
-                echo "$x x $n = " . ($x * $n) . "<br />";
-                $x++;
+                $x = 1;
+                while($x <= 12) {
+                    echo "$x x $n = " . ($x * $n) . "<br />";
+                    $x++;
+                }
+
+                echo "</p>";
             }
-
-            echo "</p>";
         ?>
     </body>
 </html>

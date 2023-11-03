@@ -1,25 +1,39 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8" />
     <title>Fibonacci EC</title>
-    <meta charset="utf-8" />
     <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
     <style type="text/css">
+        body {
+            text-align: center;
+            font-size: 18px;
+        }
+        form {
+            margin-bottom: 40px;
+        }
         .fib-result {
-            color: grey;
+            color: steelblue;
+            font-size: 20px;
+            padding: 0px 50px;
         }
     </style>
     <script>
         function loadData() {
-            let len = $("#len").val();
-            let url = "https://joannef.sgedu.site/hw08/fibapi.php?length=" + len;
+            const len = parseFloat($("#len").val());
+
+            if (isNaN(len)) {
+                $(".fib-result").text("Sorry, length must be a number!");
+                return;
+            }
+            const url = "https://joannef.sgedu.site/hw08/fibapi.php?length=" + len;
+
             fetch(url)
                 .then(res => res.text())
-                .then (data => 
+                .then(data => 
                 {
-                    console.log(data);
                     data = JSON.parse(data);
-                    data = data.fibonacci;
+                    data = data.nums;
                     seqStr = data.join(", ");
                     $(".fib-result").text(seqStr);
                 })
@@ -30,7 +44,7 @@
 <body>
     <h1>We Love Fibonacci!</h1>
 	<form>Length of fibonacci sequence: 
-        <input type='text' name='length' id="len"><br>
+        <input type='text' name='length' id="len"><br /><br />
         <input type="button" value="Generate!" onclick="loadData()">
 	</form>
     <div class="fib-result"></div>
