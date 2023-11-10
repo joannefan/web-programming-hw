@@ -1,0 +1,36 @@
+body {
+    font-family: 'Averia Serif Libre', serif;
+    color: #334d4d;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+/* header styling */
+header {
+    height: 110px;
+    background-color: #f7d199;
+}
+h1 {
+    display: inline-block;
+    margin-left: 40px;
+    margin-top: 30px;
+    font-size: 40px;
+}
+.hours-container {
+    font-size: 18px;
+    float: right;
+    margin: 10px 30px 10px 0px;
+}
+.day {
+    text-align: left;
+    display: inline-block;
+    line-height: 1.8em;
+}
+.hours {
+    color: #4a8484;
+    font-style: italic;
+    display: inline-block;
+    line-height: 1.8em;
+}

@@ -1,44 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <title>Order</title>
+    <link href="styles.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
     <style type="text/css">
-        body {
-            font-family: 'Averia Serif Libre', serif;
-            color: #334d4d;
-            height: 100%;
-            width: 100%;
-            padding: 0px;
-            margin: 0px;
-        }
-        /* header styling */
-        header {
-            height: 110px;
-            background-color: #f7d199;
-        }
-        h1 {
-            display: inline-block;
-            margin-left: 40px;
-            margin-top: 30px;
-            font-size: 40px;
-        }
-        .hours-container {
-            font-size: 18px;
-            float: right;
-            margin: 10px 30px 10px 0px;
-        }
-        .day {
-            text-align: left;
-            display: inline-block;
-            line-height: 1.8em;
-        }
-        .hours {
-            color: #4a8484;
-            font-style: italic;
-            display: inline-block;
-            line-height: 1.8em;
-        }
         /* form styling */
         form {
             display: block;
@@ -86,46 +53,78 @@
         input[type="submit"] {
             margin: 0 auto;
             display: block;
-            background-color: #efe6e0;
-            color: #A87363;
+            background-color: #7b5946;
+            color: #efe6e0;
             font-size: 20px;
             border-radius: 10px;
         }
         input[type="submit"]:hover {
-            background-color: #7b5946;
-            color: #efe6e0;
+            background-color: #efe6e0;
+            color: #A87363;
         }
         textarea {
             width: 200px;
             height: 100px;
         }
+        #error {
+            font-size: 18px;
+            color: #b14444;
+            padding: 20px 0px 40px 0px;
+            text-align: center;
+            line-height: 1.4em;
+        }
     </style>
+    <script>
+        // validation functions
+        function isValidOrder() {
+            let allZeroQty = true;
+
+            $('.select-qty select').each(function() {
+                if ($(this).prop("selectedIndex") != 0) {
+                    allZeroQty = false;
+                    return false; // quit loop if at least one item in the order
+                }
+            });
+
+            if (allZeroQty) {
+                return false;
+            }
+            return true;
+        }
+
+        function validate() {
+            let err = "";
+
+            if (!isValidOrder()) {
+                err += "At least one item must be ordered.<br />";
+            }
+
+            reqFields = {
+                fname: "First Name",
+                lname: "Last Name"
+            };
+            for (const id in reqFields) {
+                if (document.getElementById(id).value == "") {
+                    err += reqFields[id] + " is required.<br />";
+                }
+            }
+
+            if (err != "") {
+                document.getElementById('error').innerHTML =
+                    "Fix the following errors to continue:<br><br>" + err;
+                return false;
+            }
+            return true;
+        }
+    </script>
 </head>
 
 <body>
-<header>
-    <h1>🦉 Two Owls Café</h1>
-    <div class='hours-container'>HOURS <br />
-        <div class='day'>Mon - Fri:</div>
-        <div class='hours'>8:00 AM - 4:00 PM</div><br />
-        <div class='day'>Sat - Sun:</div>
-        <div class='hours'>9:00 AM - 2:00 PM</div>
-    </div>
-</html>
-
-</header>
-
-<form>
-    <table border="0" cellpadding="3">
-        <tr>
-            <th>&nbsp;</th>
-            <th>&nbsp;</th>
-            <th>Unit Price</th>
-            <th>Quantity</th>
-            <th>Total Cost</th>
-        </tr>
 <?php
-// functions
+// header
+include 'header.php';
+
+// functions related to building form
 function td($content, $className = "") {
     return "<td class='$className'>$content</td>";
 }
@@ -139,12 +138,40 @@ function makeSelect($name, $minRange, $maxRange) {
 }
 
 function makeImg($filename, $alt) {
-    $result = "<img src='images/$filename' alt='$alt'/>";
-    return $result;
+    return "<img src='images/$filename' alt='$alt'/>";
 }
 
+function hiddenField($name, $val) {
+    return "<input type='hidden' name='$name' value='$val'/>";
+}
 
-	
+function echoFormBeg() {
+    echo <<<HTML
+    <form onSubmit="return validate()" method="GET" action="process.php">
+        <table border="0" cellpadding="3">
+            <tr>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+            </tr>
+    HTML;
+}
+
+function echoFormEnd() {
+    echo <<<HTML
+        </table>
+        <div class="client-info">
+            <label>First Name* </label><input type='text' name='first' id="fname" /><br />
+            <label>Last Name* </label><input type='text' name='last' id="lname" /><br />
+            <label>Special Instructions </label><textarea id="message"></textarea><br />
+            <input type="submit" value="Submit Order"/>
+            <div id="error">&nbsp;</div>
+        </div>
+    </form>
+    HTML;
+}
+
 // connection info
 $server = "localhost";
 $userid = "uldx2rdrq1961";
@@ -158,43 +185,38 @@ $conn = new mysqli($server, $userid, $pw);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-// echo "Connected successfully<br>";
 	
-// select the database
+// select the database and run query
 $conn->select_db($db);
-
-// run a query
 $sql = "SELECT * FROM menu";
 $result = $conn->query($sql);
 
-// get results
+// read results
 if ($result->num_rows > 0) {
+    // write form beginning
+    echoFormBeg();
+
     while($row = $result->fetch_assoc()) {
         extract($row);
         $infoCells = td(makeImg($image, "placeholder"), 'itemImg') .
                     td("<h5>$name</h5><br />$description", 'name-descript') . 
                     td("$$price", 'unit-price') . 
-                    td(makeSelect("qty$id", 0, 10), 'select-qty') .
-                    td("hello", 'total-cost');
+                    td(makeSelect("qty$id", 0, 10), 'select-qty');
         
         echo "<tr>$infoCells</tr>";
+        
+        // hidden fields for the name and unit price of the food item, so that these get sent with the POST
+        $hidden = hiddenField("name$id", $name) . hiddenField("price$id", $price);
+        echo $hidden;
     }
-} 
-else {
-    echo "no results";
+} else {
+    echo "Data not found.";
 }
-	
-// close the connection	
+
 $conn->close();
 
+// write form ending
+echoFormEnd();
 ?>
-    </table>
-    <div class="client-info">
-        <label>First Name* </label><input type='text' name='first' id="fname" /><br />
-        <label>Last Name* </label><input type='text' name='last' id="lname" /><br />
-        <label>Special Instructions </label><textarea id="message"></textarea><br />
-        <input type="submit" value="Submit Order"/>
-    </div>
-</form>
 </body>
 </html>
