@@ -1,5 +1,5 @@
 {
-    "entries": [
+    "items": [
         {
             "name": "Memory Foam Pillow",
             "description": "A contoured memory foam pillow designed to provide optimal support for a restful night's sleep.",
@@ -8,11 +8,11 @@
             "categories": ["bedding", "pillow"]
         },
         {
-            "name": "All-Season Down Comforter",
+            "name": "All-Season Down Duvet",
             "description": "A duvet filled with high-quality down, providing the perfect blend of warmth and breathability for year-round comfort.",
             "price": 104.99,
             "sizes": ["Full", "Queen"],
-            "categories": ["bedding", "duvet", "comforter"]
+            "categories": ["bedding", "duvet"]
         },
         {
             "name": "Cotton Bed Sheet Set",
@@ -50,11 +50,39 @@
             "categories": ["bedding", "pillow"]
         },
         {
-            "name": "Animal-themed Crib Bedding Set",
+            "name": "Animal-themed Crib Bed Sheet Set",
             "description": "A crib bedding set featuring fun animal designs to brighten up any nursery, 100% cotton with thread count 400.",
             "price": 58.99,
             "sizes": ["Crib (Standard)"],
             "categories": ["bedding", "sheets", "nursery"]
+        },
+        {
+            "name": "Quilted Throw Blanket",
+            "description": "Add a touch of warmth and style to your bedding with this quilted throw blanket. It's made from high-quality materials and features a beautiful quilted design that complements any room.",
+            "price": 19.99,
+            "sizes": ["Standard"],
+            "categories": ["bedding", "accessory"]
+        },
+        {
+            "name": "Orthopedic Pillow",
+            "description": "Improve your sleep quality and alleviate neck and back pain with this orthopedic memory foam pillow. It's designed to provide optimal support and comfort by conforming to your head and neck.",
+            "price": 49.99,
+            "sizes": ["Standard"],
+            "categories": ["bedding", "pillow"]
+        },
+        {
+            "name": "Embroidered Throw Pillow",
+            "description": "Elevate your home decor with this exquisite embroidered decorative throw pillow. It features intricate, hand-stitched embroidery and vibrant colors, making it a stylish and elegant addition to your living room or bedroom.",
+            "price": 29.99,
+            "sizes": ["Standard"],
+            "categories": ["pillow", "accessory"]
+        },
+        {
+            "name": "Lightweight Summer Duvet",
+            "description": "Beat the summer heat with our breathable duvet. Stay cool and comfortable all night with its moisture-wicking design. Enjoy a refreshing night's sleep, even on the hottest summer nights.",
+            "price": 69.99,
+            "sizes": ["Twin XL", "Full", "Queen"],
+            "categories": ["bedding", "duvet"]
         }
     ]
 }

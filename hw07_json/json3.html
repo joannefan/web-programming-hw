@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Part 3</title>
+        <title>JSON Part 3</title>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <style type="text/css">
             body {
@@ -54,7 +54,6 @@
         </style>
     </head>
     <body>
-        <!-- method="get" action="#" -->
         <form>
             <label>Pick a category: </label><br />
             <select name="category" id="pick-category"></select><br />
@@ -63,11 +62,11 @@
 	    <div id="json-list">&nbsp;</div>
 
         <script>
-
             $.get("products.json", function(data) {
+                // get categories from json data
                 let options = [];
-                data.entries.forEach(function(entry) {
-                    options.push(...entry.categories);
+                data.items.forEach(function(item) {
+                    options.push(...item.categories);
                 });
                 options = new Set(options); // remove duplicates
 
@@ -79,52 +78,21 @@
                 $("#pick-category").html(optionsHTML);
 
                 $("#filter-btn").click(function(e) {
-                    // prevent default form submission behavior which reloads the page
+                    // prevent default form submission behavior that reloads the page
                     e.preventDefault();
 
-                    var picked = $('#pick-category').val();
+                    // display all products that have the selected category
+                    const picked = $("#pick-category").val();
                     let names = "<p>MATCHING PRODUCTS:</p><ul>";
-                    data.entries.forEach(function(entry) {
-                        if (entry.categories.includes(picked)) {
-                            names += "<li>" + entry.name + "</li>";
+                    data.items.forEach(function(item) {
+                        if (item.categories.includes(picked)) {
+                            names += "<li>" + item.name + "</li>";
                         }
                     })
                     names += "</ul>";
-
                     $("#json-list").html(names);
                 })
             });
         </script>
     </body>
 </html>
-
-<!-- 
-    // {
-        //     "name":,
-        //     "description":,
-        //     "price":,
-        //     "sizes":,
-        //     "categories":
-        // },
-        // {
-        //     "name":,
-        //     "description":,
-        //     "price":,
-        //     "sizes":,
-        //     "categories":
-        // },
-        // {
-        //     "name":,
-        //     "description":,
-        //     "price":,
-        //     "sizes":,
-        //     "categories":
-        // },
-        // {
-        //     "name":,
-        //     "description":,
-        //     "price":,
-        //     "sizes":,
-        //     "categories":
-        // }
- -->

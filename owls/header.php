@@ -1,3 +1,4 @@
+<!-- this php page writes a header with the name and hours of operation -->
 <?php
 echo <<<HTML
     <header>

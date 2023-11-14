@@ -2,21 +2,93 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Part 1</title>
+        <title>JSON Part 1</title>
         <script>
             products = {
-                "entries": [
+                "items": [
                     {
                         "name": "Memory Foam Pillow",
                         "description": "A contoured memory foam pillow designed to provide optimal support for a restful night's sleep.",
                         "price": 42.99,
+                        "sizes": ["Standard", "Large"],
                         "categories": ["bedding", "pillow"]
                     },
                     {
-                        "name": "All-Season Down Comforter",
+                        "name": "All-Season Down Duvet",
                         "description": "A duvet filled with high-quality down, providing the perfect blend of warmth and breathability for year-round comfort.",
                         "price": 104.99,
-                        "categories": ["bedding", "duvet", "comforter"]
+                        "sizes": ["Full", "Queen"],
+                        "categories": ["bedding", "duvet"]
+                    },
+                    {
+                        "name": "Cotton Bed Sheet Set",
+                        "description": "A soft and hypoallergenic 100% cotton bed sheet set (1 fitted sheet, 1 flat sheet, 2 pillowcases).",
+                        "price": "49.99",
+                        "sizes": ["Twin XL", "Full"],
+                        "categories": ["bedding", "sheets"]
+                    },
+                    {
+                        "name": "Microfiber Bed Sheet Set",
+                        "description": "A luxurious microfiber bed sheet set that is silky soft, hypoallergenic, and resistant to wrinkles (1 fitted sheet, 1 flat sheet, 2 pillowcases).",
+                        "price": 29.99,
+                        "sizes": ["Twin", "King"],
+                        "categories": ["bedding", "sheets"]
+                    },
+                    {
+                        "name": "Mattress Protector",
+                        "description": "A waterproof and breathable mattress protector that safeguards your mattress from spills, stains, and allergens.",
+                        "price": 23.99,
+                        "sizes": ["Twin XL", "Queen"],
+                        "categories": ["bedding", "accessory"]
+                    },
+                    {
+                        "name": "Satin Silk Pillowcase",
+                        "description": "A satin silk pillowcase designed to reduce friction and hair breakage, while keeping your skin moisturized and refreshed throughout the night.",
+                        "price": 24.99,
+                        "sizes": ["Standard", "Queen", "King"],
+                        "categories": ["bedding", "pillow"]
+                    },
+                    {
+                        "name": "Mulberry Silk Pillowcase",
+                        "description": "A luxurious silk pillowcase made from 100% pure mulberry silk, guaranteed to be smooth and gentle on the skin and hair.",
+                        "price": 37.99,
+                        "sizes": ["Standard", "King"],
+                        "categories": ["bedding", "pillow"]
+                    },
+                    {
+                        "name": "Animal-themed Crib Bed Sheet Set",
+                        "description": "A crib bedding set featuring fun animal designs to brighten up any nursery, 100% cotton with thread count 400.",
+                        "price": 58.99,
+                        "sizes": ["Crib (Standard)"],
+                        "categories": ["bedding", "sheets", "nursery"]
+                    },
+                    {
+                        "name": "Quilted Throw Blanket",
+                        "description": "Add a touch of warmth and style to your bedding with this quilted throw blanket. It's made from high-quality materials and features a beautiful quilted design that complements any room.",
+                        "price": 19.99,
+                        "sizes": ["Standard"],
+                        "categories": ["bedding", "accessory"]
+                    },
+                    {
+                        "name": "Orthopedic Pillow",
+                        "description": "Improve your sleep quality and alleviate neck and back pain with this orthopedic memory foam pillow. It's designed to provide optimal support and comfort by conforming to your head and neck.",
+                        "price": 49.99,
+                        "sizes": ["Standard"],
+                        "categories": ["bedding", "pillow"]
+                    },
+                    {
+                        "name": "Embroidered Throw Pillow",
+                        "description": "Elevate your home decor with this exquisite embroidered decorative throw pillow. It features intricate, hand-stitched embroidery and vibrant colors, making it a stylish and elegant addition to your living room or bedroom.",
+                        "price": 29.99,
+                        "sizes": ["Standard"],
+                        "categories": ["pillow", "accessory"]
+                    },
+                    {
+                        "name": "Lightweight Summer Duvet",
+                        "description": "Beat the summer heat with our breathable duvet. Stay cool and comfortable all night with its moisture-wicking design. Enjoy a refreshing night's sleep, even on the hottest summer nights.",
+                        "price": 69.99,
+                        "sizes": ["Twin XL", "Full", "Queen"],
+                        "categories": ["bedding", "duvet"]
                     }
                 ]
             }
@@ -25,8 +97,7 @@
     <body>
         <div id="json-data">&nbsp;</div>
         <script>
-            // display the raw data
-            rawStr = JSON.stringify(products);
+            const rawStr = JSON.stringify(products);
             document.getElementById("json-data").innerHTML = rawStr;
         </script>
     </body>

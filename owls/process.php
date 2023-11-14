@@ -1,3 +1,7 @@
+<!-- 
+    This php page reads the user's order and displays a summary of the order
+    along with the pickup time.
+ -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,7 +25,7 @@
             font-size: 36px;
             color: blanchedalmond;
         }
-        /* table styling for the receipt */
+        /* table styling for showing the order summary */
         table {
             position: relative;
             box-sizing: border-box;
@@ -74,6 +78,8 @@
     define("TAXRATE", 0.0625);
 
     // OBJECTS
+    // the Item object represents a food item that the customer has ordered
+    // storing the item name, unit price, and quantity ordered
     class Item {
         public $name;
         public $price;
@@ -87,18 +93,26 @@
     }
 
     // FUNCTIONS
+    /**
+     * formats the given amount as a currency string.
+     * 
+     * @param {number} amount - a numeric amount to format as currency.
+     * @throws - will throw error if amount is not a number.
+     * @return {string} - $ followed by amount padded with up to 2 trailing zeros.
+     */
     function currencyStr($amount) {
         if (!is_numeric($amount)) {
             throw new InvalidArgumentException("Amount cannot be formatted as currency");
         }
 
+        // round to two decimal places and split around the '.'
         $rounded = round($amount, 2);
-
         $exploded = explode(".", $rounded);
-        // if no '.' exists, then add two trailing zeros
+
+        // no '.' exists
         if (count($exploded) == 1) {
             $rounded .= ".00";
-        } // if '.' exists but there is only one 0, add another 0
+        } // '.' exists but there is only one 0
         else if (strlen($exploded[1]) === 1) {
             $rounded .= "0";
         }
@@ -106,16 +120,22 @@
         return "$" . $rounded;
     }
     
+    // creates a table row with four data cells
+    /**
+     * creates a new receipt row with four columns.
+     * 
+     * @param {string} name - name of item or field.
+     * @param {number} price - unit price of item.
+     * @param {*} qty - quantity of item.
+     * @param {number} totalCost - total cost, accounting for quantity; or subtotal.
+     * @return {string} - a tr element containing all the given details.
+     */
     function newReceiptRow($name, $price, $qty, $totalCost) {
-        $unitPrice = currencyStr($price);
+        if ($price !== "&nbsp;") {
+            $price = currencyStr($price);
+        }
         $cost = currencyStr($totalCost);
-        $rowData = "<tr><td>$name</td><td>$qty</td><td>$unitPrice</td><td>$cost</td></tr>";
-        return $rowData;
-    }
-
-    function subtotalRow($label, $amount) {
-        $cost = currencyStr($amount);
-        $rowData = "<tr><td>$label</td><td>&nbsp;</td><td>&nbsp;</td><td>$cost</td></tr>";
+        $rowData = "<tr><td>$name</td><td>$qty</td><td>$price</td><td>$cost</td></tr>";
         return $rowData;
     }
     
@@ -136,10 +156,10 @@
         }
     }
     
-    // create a row for each item ordered, and calculate subtotal
     $subtotal = 0;
     $receiptRows = "";
     
+    // create a row for each item ordered, and calculate subtotal
     foreach ($formData as $item) {
         $cost = $item->price * $item->qty;
         $receiptRows .= newReceiptRow($item->name, $item->price, $item->qty, $cost);
@@ -150,10 +170,10 @@
     $tax = $subtotal * TAXRATE;
     $total = $subtotal + $tax;
 
-    // create subtotal, tax, and total rows
-    $showSubtotal = subtotalRow("SUBTOTAL", $subtotal);
-    $showTax = subtotalRow("TAX", $tax);
-    $showTotal = subtotalRow("TOTAL", $total);
+    // create rows for subtotal, tax, and total
+    $showSubtotal = newReceiptRow("SUBTOTAL", "&nbsp;", "&nbsp;", $subtotal);
+    $showTax = newReceiptRow("TAX", "&nbsp;", "&nbsp;", $tax);
+    $showTotal = newReceiptRow("TOTAL", "&nbsp;", "&nbsp;", $total);
 
     // write the whole receipt table to the document
     echo <<<HTML
@@ -173,16 +193,16 @@
 ?>
 
 <script>
-    // Append to the table the pickup time based on the user's timezone
+    // append to the table the pickup time based on the user's timezone
     const userTime = new Date();
     
-    // add 20 minutes to user's current date
+    // add 20 minutes to user's current time
     userTime.setMinutes(userTime.getMinutes() + 20);
 
     const day = userTime.toLocaleDateString();
     const ts = userTime.toLocaleTimeString('en-US', { hour12: true, hour: "numeric", minute: "numeric"});
     const timeHtml = `<tr><td>PICKUP TIME</td><td>&nbsp;</td><td>&nbsp;</td><td>${day}<br />${ts}</td></tr>`;
-    
+
     document.getElementById("receipt").innerHTML += timeHtml;
 </script>
 </body>

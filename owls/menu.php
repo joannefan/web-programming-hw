@@ -1,3 +1,6 @@
+<!-- 
+    This php page displays a menu of food items and a form for the user to order.
+ -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -76,13 +79,18 @@
     </style>
     <script>
         // validation functions
+        /** 
+         * checks that the user has ordered at least one item.
+         * 
+         * @return {boolean} - true if user ordered at least one item, else false.
+         */
         function isValidOrder() {
             let allZeroQty = true;
 
             $('.select-qty select').each(function() {
                 if ($(this).prop("selectedIndex") != 0) {
                     allZeroQty = false;
-                    return false; // quit loop if at least one item in the order
+                    return false; // quit loop if there is an item in the order
                 }
             });
 
@@ -92,6 +100,12 @@
             return true;
         }
 
+        /** 
+         * validates the form input (that at least one item is ordered and 
+         * the user’s name is provided) and writes error messages if not.
+         * 
+         * @return {boolean} - true if order meets requirements, otherwise false.
+         */
         function validate() {
             let err = "";
 
@@ -99,6 +113,7 @@
                 err += "At least one item must be ordered.<br />";
             }
 
+            // customer's first and last name are required
             reqFields = {
                 fname: "First Name",
                 lname: "Last Name"
@@ -124,27 +139,60 @@
 // header
 include 'header.php';
 
-// functions related to building form
+// functions related to building form:
+
+/** 
+ * creates a table data element with the given content and class name.
+ * 
+ * @param {string} content - the content to display in the td.
+ * @param {string} className - the class to assign to the td.
+ * @return {string} - a <td> with the given content and class.
+ */
 function td($content, $className = "") {
     return "<td class='$className'>$content</td>";
 }
 
+/** 
+ * creates a select element with the given name and range of numeric values.
+ * 
+ * @param {string} name - the name attribute of the select.
+ * @param {number} minRange - the minimum value of the select options.
+ * @param {number} maxRange - the maximum value of the select options.
+ * @return {string} - a <select> with the given settings.
+ */
 function makeSelect($name, $minRange, $maxRange) {
-	$result = "<select name='$name' size='1'>";
-	for ($i = $minRange; $i <= $maxRange; $i++) {
+    $result = "<select name='$name' size='1'>";
+    for ($i = $minRange; $i <= $maxRange; $i++) {
         $result .= "<option>$i</option>";
     }
-	return $result . "</select>";
+    return $result . "</select>";
 }
 
+/** 
+ * creates an img element with the given image filename and alt.
+ * 
+ * @param {string} filename - the image file's name.
+ * @param {string} alt - value of the alt attribute.
+ * @return {string} - an <img> with the given attributes.
+ */
 function makeImg($filename, $alt) {
     return "<img src='images/$filename' alt='$alt'/>";
 }
 
+/** 
+ * creates an input of type hidden with the given name and value.
+ * 
+ * @param {string} name - the name attribute of the input element.
+ * @param {string} val - the value attribute of the input element.
+ * @return {string} - an <input> of type 'hidden' with the given attributes.
+ */
 function hiddenField($name, $val) {
     return "<input type='hidden' name='$name' value='$val'/>";
 }
 
+/** 
+ * writes the beginning of the form and table to the page.
+ */
 function echoFormBeg() {
     echo <<<HTML
     <form onSubmit="return validate()" method="GET" action="process.php">
@@ -158,6 +206,9 @@ function echoFormBeg() {
     HTML;
 }
 
+/** 
+ * writes the end of the table and remaining form elements to the page.
+ */
 function echoFormEnd() {
     echo <<<HTML
         </table>
@@ -177,15 +228,13 @@ $server = "localhost";
 $userid = "uldx2rdrq1961";
 $pw = "5u9qxtgljeft";
 $db= "dbqhheflgmlha0";
-		
-// Create connection
-$conn = new mysqli($server, $userid, $pw);
 
-// Check connection
+// create and check connection
+$conn = new mysqli($server, $userid, $pw);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-	
+
 // select the database and run query
 $conn->select_db($db);
 $sql = "SELECT * FROM menu";
@@ -196,6 +245,7 @@ if ($result->num_rows > 0) {
     // write form beginning
     echoFormBeg();
 
+    // for each row from the db, write the data as a tr element
     while($row = $result->fetch_assoc()) {
         extract($row);
         $infoCells = td(makeImg($image, "placeholder"), 'itemImg') .
@@ -205,7 +255,7 @@ if ($result->num_rows > 0) {
         
         echo "<tr>$infoCells</tr>";
         
-        // hidden fields for the name and unit price of the food item, so that these get sent with the POST
+        // hidden fields to send the names and unit prices of menu items
         $hidden = hiddenField("name$id", $name) . hiddenField("price$id", $price);
         echo $hidden;
     }

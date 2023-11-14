@@ -2,8 +2,7 @@
 <html>
     <head>
         <meta charset="UTF-8" />
-        <title>Part 2</title>
-        <!-- <link href="styles.css" rel="stylesheet" type="text/css" /> -->
+        <title>JSON Part 2</title>
         <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
         <style type="text/css">
             body {
@@ -71,20 +70,21 @@
         <div id="json-list">&nbsp;</div>
         <script>
             $.get("products.json", function(data) {
-                let DataStr = "<ol>";
-                data.entries.forEach(function(entry) {
+                let dataStr = "<ol>";
+                data.items.forEach(function(item) {
                     let details = "<ul class='product'>";
-                    details += "<li>" + entry.name + "</li>" +
-                                "<li>" + entry.description + "</li>" +
-                                "<li>" + "$" + entry.price + "</li>" +
-                                "<li>" + "SIZES: " + entry.sizes.join(", ") + "</li>" +
-                                "<li>" + "CATEGORIES: " + entry.categories.join(", ") + "</li>";
+                    details += "<li>" + item.name + "</li>" +
+                                "<li>" + item.description + "</li>" +
+                                "<li>" + "$" + item.price + "</li>" +
+                                "<li>" + "SIZES: " + item.sizes.join(", ") + "</li>" +
+                                "<li>" + "CATEGORIES: " + item.categories.join(", ") + "</li>";
                     details += "</ul>";
 
-                    DataStr += "<li>" + details + "</li>";
+                    dataStr += "<li>" + details + "</li>";
                 }) 
-                DataStr += "</ol>";
-                document.getElementById("json-list").innerHTML = DataStr;
+                dataStr += "</ol>";
+
+                $("#json-list").html(dataStr);
             })
         </script>
     </body>
