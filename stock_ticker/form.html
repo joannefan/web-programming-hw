@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock Ticker App</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style></style>
+</head>
+<body>
+    <form action="/process" method="GET">
+        <label for="user-text">Enter a stock ticker symbol or a company name: </label>
+        <input type="text" id="user-text" name="target-val"><br />
+
+        <input type="radio" id="radio-ticker" name="key" value="ticker">
+        <label for="radio-ticker">Stock ticker</label><br />
+        <input type="radio" id="radio-company" name="key" value="company">
+        <label for="radio-company">Company name</label>
+
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
