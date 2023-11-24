@@ -4,19 +4,55 @@
     <meta charset="UTF-8">
     <title>Stock Ticker App</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <style></style>
+    <style>
+        body {
+            background-color: #fcf6e0;
+        }
+        h1 {
+            color: #5d9988;
+            font-size: 30px;
+            margin: 50px 10px 20px 40px;
+            text-align: center;
+        }
+        form {
+            line-height: 1.7em;
+            font-size: 19px;
+            width: 600px;
+            margin: 0 auto;
+            margin-top: 30px;
+        }
+        input {
+            font-size: 17px;
+        }
+        input[type="submit"] {
+            padding: 6px 12px;
+            margin-left: 220px;
+            margin-top: 20px;
+            background-color: #e5fcf6;
+            box-sizing: border-box;
+            border-radius: 5px;
+            border: solid 2px #89b7aa;
+        }
+        input[type="submit"]:hover {
+            background-color: #5d9988;
+            color: white;
+            cursor: pointer;
+            
+        }
+    </style>
 </head>
 <body>
+    <h1>Stock Ticker Lookup</h1>
     <form action="/process" method="GET">
-        <label for="user-text">Enter a stock ticker symbol or a company name: </label>
+        <label for="user-text">Enter stock ticker symbol or company name: </label>
         <input type="text" id="user-text" name="target-val"><br />
 
         <input type="radio" id="radio-ticker" name="key" value="ticker">
         <label for="radio-ticker">Stock ticker</label><br />
         <input type="radio" id="radio-company" name="key" value="company">
-        <label for="radio-company">Company name</label>
+        <label for="radio-company">Company name</label><br />
 
-        <input type="submit" value="Submit">
+        <input type="submit" value="Search">
     </form>
 </body>
 </html>

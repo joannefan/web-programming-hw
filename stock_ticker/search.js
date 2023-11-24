@@ -6,6 +6,37 @@ const { resourceLimits } = require('worker_threads');
 
 const uri = "mongodb+srv://dbuser1:void-10ne@cluster0.cix9qnf.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
+const css = `
+            body {
+                background-color: #fcf6e0;
+            }
+            h1 {
+                color: #5d9988;
+                font-size: 30px;
+                margin: 50px 0px 20px 0px;
+                text-align: center;
+            }
+            ul {
+                box-sizing: border-box;
+                width: 400px;
+                margin: 0 auto;
+            }
+            li {
+                color: darkolivegreen;
+                line-height: 1.4em;
+                list-style: none;
+                font-size: 18px;
+                margin: 30px;
+            }
+            p {
+                text-align: center;
+                font-size: 18px;
+            }
+            b {
+                width: 100px;
+                display: inline-block;
+                color: gray;
+            }`;
 
 async function searchDB(byCompany, val) {
     let resultArr = null;
@@ -35,46 +66,52 @@ async function searchDB(byCompany, val) {
 }
 
 async function displayMatches(matches, res) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+
     if (matches == null) { 
         res.write("Sorry, something wen't wrong!");
-        return;
-    } else if (matches.length == 0) {
-        res.write("<h1>NO MATCHES FOUND.</h1>Did you select the correct kind of input?");
-        return;
-    }
-
-    try {
-        let displayStr = "<h1>MATCHING RESULTS:</h1><ul>";
-        matches.forEach(doc => {
-            displayStr += "<li>";
-            for (const [field, val] of Object.entries(doc)) {
-                if (field != "_id") {
-                    displayStr += `<b>${field}: </b>${val}<br />`;
-                }
+    } else {
+        try {
+            let content = "";
+            if (matches.length == 0) {
+                content = "<h1>No Matches Found.</h1><p>Did you select the correct kind of input?</p>";
+            } else {
+                content = "<h1>Matching Results:</h1><ul>";
+                matches.forEach(doc => {
+                    content += "<li>";
+                    for (const [field, val] of Object.entries(doc)) {
+                        if (field != "_id") {
+                            content += `<b>${field}: </b>${val}<br />`;
+                        }
+                    }
+                    content += "</li>";
+                });
+                content += "</ul>";
             }
-            displayStr += "</li>";
-        });
-        displayStr += "</ul>";
 
-        res.write(displayStr);
-    } catch (err) {
-        console.error("Error iterating over MongoDB cursor:", err);
+            const resultsHtml = `<html><head><style>${css}</style></head><body>${content}</body></html>`;
+            res.write(resultsHtml);
+        } catch (err) {
+            console.error("Error iterating over MongoDB cursor:", err);
+        }
     }
+
+    res.end();
 }
 
 
 http.createServer(async function (req, res) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
     var path = url.parse(req.url, true).pathname;
     
     if (path == "/") {
-        // Read and write the html file containing the form
+        // serve the html for the form
         fs.readFile('form.html', 'utf8', function(err, data) {
             if (err) {
                 console.error(err);
                 res.writeHead(500, {'Content-Type': 'text/plain'});
                 res.end('Internal Server Error');
             } else {
+                res.writeHead(200, {'Content-Type': 'text/html'});
                 res.write(data);
                 res.end();
             }
@@ -87,8 +124,6 @@ http.createServer(async function (req, res) {
 
             const results = await searchDB(isCompany, val);
             displayMatches(results, res);
-            
-            res.end();
         }
     }
 }).listen(8080);
