@@ -99,7 +99,6 @@ async function displayMatches(matches, res) {
     res.end();
 }
 
-
 http.createServer(async function (req, res) {
     var path = url.parse(req.url, true).pathname;
     

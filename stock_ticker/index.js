@@ -12,7 +12,7 @@ async function insertDocs() {
         const collection = db.collection('Companies');
 
         // read data line by line from csv file
-        const fileStream = fs.createReadStream('companies-1.csv');
+        const fileStream = fs.createReadStream('companies.csv');
         const rl = readline.createInterface({
             input: fileStream,
             crlfDelay: Infinity,
