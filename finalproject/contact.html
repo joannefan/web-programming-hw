@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Contact</title>
+    <style type="text/css">
+        body {
+            background-color: #FAE7C6;
+            background-image: url('quote-icon.png');
+            background-position: bottom;
+            background-repeat: no-repeat;
+            background-size: 1160px; 
+        }
+        .banner {
+            display: block;
+            margin: 0 auto;
+            background-color: #a6cfd5;
+            height: 250px;
+            text-align: center;
+        }
+        img {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            height: 150px;
+        }
+        h2 {
+            display: block;
+            margin: 0 auto;
+            width: 80%;
+            font-size: 34px;
+            text-align: center;
+            color: #2a3d45;
+        }
+        form {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 410px;
+            box-sizing: border-box;
+        }
+        form h4 {
+            text-align: center;
+            font-size: 24px;
+            color: #2a3d45;
+        }
+		#error {
+            color: #496f5d;
+            margin-bottom: 80px;
+            text-align: left;
+            line-height: 1.4em;
+            height: 150px;
+        }
+		label {
+            display: inline-block;
+            margin-left: 20px;
+            font-size: 18px;
+            color: #7b5946;
+        }
+		input, select, textarea {
+            margin-bottom: 12px;
+            padding: 12px;
+            font-size: 16px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            border: 1px solid #b6b6b6;
+            width: 400px;
+            color: #5b5b5b;
+            font-family: 'Averia Serif Libre', serif;
+        }
+        textarea {
+            width: 400px;
+            height: 140px;
+        }
+        input[type="submit"] {
+            display: block;
+            margin: 30px 0px;
+            text-align: center;
+            padding: 20px 0px;
+            background-color: #84A9C0;
+            color: #2a3d45;
+            font-size: 22px;
+            font-weight: 600;
+            font-family: 'Averia Serif Libre', serif;;
+            border-radius: 10px;
+        }        
+        input[type="submit"]:hover {
+            background-color: #47606b;
+            color: white;
+        }
+        input[type="checkbox"] {
+            width: fit-content;
+            height: fit-content;
+        }
+        .chkbox-label {
+            color: #5b5b5b;
+            margin-left: 10px;
+        }
+        .chkboxes-container {
+            display: block;
+            margin-left: 160px;
+        }
+        /* RESPONSIVE DESIGN - mobile */
+        /* @media screen and (max-width: 500px) {
+            input, select, textarea {
+                width: 240px;
+            }
+            h2 {
+                font-size: 30px;
+                width: 70%;
+            }
+	    .banner {
+                margin-top: 80px;
+            }
+        } */
+    </style>
+    <script>
+        /*
+        If no phone number provided at all, nothing to validate. 
+        but if provided, ensure it is in one of the following formats: 
+        XXXXXXXXXX
+        XXX-XXX-XXXX
+        XXX.XXX.XXXX
+        XXX XXX XXXX
+        */
+        function validatePhone() {
+            const phone = document.getElementById("phone").value;
+            if (phone == "") {
+                return true;
+            } else {
+                return phone.match(/^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/);
+            }
+        }
+
+        function validateEmail() {
+            const email = document.getElementById("email").value;
+            console.log(email);
+            return email.match(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i);
+        }
+
+        function validate() {
+            reqFields = {
+                fname: "First Name",
+                lname: "Last Name",
+                email: "Email",
+                message: "Message",
+            };
+            let err = "";
+            for (const id in reqFields) {
+                if (document.getElementById(id).value == "") {
+                    err += reqFields[id] + " is required.<br />";
+                }
+            }
+
+            if (!validatePhone()) {
+                err += "Invalid phone number.<br />";
+            }
+            if (!validateEmail()) {
+                err += "Email format does not match <em>username@domain.tld</em><br />";
+            }
+
+            if (err != "") {
+                document.getElementById('error').innerHTML =
+                    "ERRORS:<br>" + err;
+                return false;
+            }
+
+            return true;
+        }
+    </script>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="logo"></a>
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li>
+                <div class="dropdown">
+                    <a href="mission.html" class="dropdown-btn">About</a>
+                    <div class="dropdown-links">
+                        <a href="mission.html">Our Services</a>
+                        <a href="impact.html">Our Story</a>
+                    </div>
+                </div> 
+            </li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <div class="banner">
+        <div id="banner-overlay"><img src="contact-icon.png" alt="mail icon"><h2>Get in Touch</h2></div>
+    </div>
+    <form onSubmit="return validate()" method="POST" action="confirmation.php">
+        <h4>If you have any questions or need help, please fill out the form below.</h4>
+        <input type='text' name='first' id="fname" placeholder="First name*"/><br />
+        <input type='text' name='last' id="lname" placeholder="Last Name*"/><br />
+        <input type='text' name='email' id="email" placeholder="Email*"/><br />
+        <input type='text' name='phone' id="phone" placeholder="Phone Number"/><br />
+        <select name="query" id="queryType" >
+            <option value="" disabled selected>Select a Purpose</option>
+            <option value="donation">Product/Service Question</option>
+            <option value="opportunities">Feature Request</option>
+            <option value="programs">Advertising</option>
+            <option value="collab">Business Inquiry</option>
+            <option value="feedback">General Question</option>
+            <option value="other">Other</option>
+        </select><br />
+        <textarea id="message" placeholder="Message*"></textarea><br />
+        <input type="submit" value="Submit"/>
+        <div id="error">&nbsp;</div>
+    </form>
+  
+    <!-- <footer class="footer">
+        
+    </footer> -->
+</body>
+</html>
+
+<!-- Inspired by https://www.pixpa.com/contact-us -->
