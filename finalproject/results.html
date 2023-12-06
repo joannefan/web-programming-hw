@@ -34,8 +34,8 @@
         }
         .catResults {
             width: 100%;
-            padding: 5px;
-            margin: 10px 0px;
+            padding: 10px 0px;
+            margin: 30px 0px;
         }
         .catResults input[type='button'] {
             padding: 10px; /* Adjust the padding as needed */
@@ -146,39 +146,60 @@
         //     // "Public transportation": "public_transport",
         // };
 
+        // var dietRestrictions = ["vegetarian", "vegan", "halal", "kosher"];
+        const dietRestrictions = ["vegetarian"];
+        const cateringTypes = [
+            "catering.restaurant",
+            "catering.cafe", 
+            "catering.bar"
+        ];
+
+        const cateringTags = {
+            "catering.restaurant": 'Restaurant',
+            "catering.cafe": 'Cafe', 
+            "catering.bar": 'Bar',
+            "vegetarian": "Vegetarian",
+            "vegan": "Vegan", 
+            "halal": "Halal", 
+            "kosher": "Kosher"
+        }
+
         const commercialTags = {
-            "commercial.supermarket": "Supermarkets",
-            "commercial.marketplace": "Marketplaces",
-            "commercial.shopping_mall": "Malls",
+            "commercial.supermarket": "Supermarket",
+            "commercial.marketplace": "Marketplace",
+            "commercial.shopping_mall": "Mall",
             "commercial.clothing": "Clothing",
             // "service.financial.bank%2Cservice.financial.atm": "Banks/ATM",
             // "public_transport": "Transport",
         };
 
         const naturalTags = {
-            "natural.forest": "Forests",
+            "natural.forest": "Forest",
             "natural.water": "Water",
-            "natural.mountain": "Mountains",
-            "camping": "Camping Sites",
-            "leisure.park": "Parks",
+            "natural.mountain": "Mountain",
+            "camping": "Camping Site",
+            "leisure.park": "Park",
             // "natural": "Any nature"
         };
 
-        // const culturalOptions = {
-        //     "Famous Tourist Sites": "tourism.sights",
-        //     "Theatre & Arts": "entertainment.culture",
-        //     "Museums": "entertainment.museum",
-        //     "Universities": "building.university%2Cbuilding.college",
-        //     "Religious Sites": "tourism.sights.place_of_worship",
-        //     "Historical Sites": "building.historic"
-        // };
+        const culturalTags = {
+            "tourism.sights": "Tourist",
+            "entertainment.culture": "Theatre/Art",
+            "entertainment.museum": "Museum",
+            "tourism.sights.place_of_worship": "Religious",
+            "building.historic": "Historical"
+        };
 
         function getCatTags(containerId) {
             switch (containerId) {
+                case "catering-container":
+                    return cateringTags;
                 case "commercial-container":
                     return commercialTags;
                 case "natural-container":
                     return naturalTags;
+                case "cultural-container":
+                    return culturalTags;
                 default:
                     return commercialTags;
             }
@@ -294,13 +315,11 @@
 <body>
     <h1>Build the Trip of a Lifetime</h1>
     <div id="cats-container">
-        <!-- <form id="catering-form" action="#" method="#">
-            <h4>Restaurants and Cafes</h4>
-        </form>
         <div class='catResults' id='catering-container'>
             <h2>Culinary Expeditions</h2>
+            <form id="catering-form" action="#" method="#">Filter results: </form>
             <div class="panes"></div>
-        </div> -->
+        </div>
 
         <div class='catResults' id='commercial-container'>
             <h2>Retail & Commercial</h2>
@@ -308,13 +327,11 @@
             <div class="panes"></div>
         </div>
 
-        <!-- <form id="cultural-form" action="#" method="#">
-            <h4>Classic Tourist Sites</h4>
-        </form>
         <div class='catResults' id='cultural-container'>
-            <h2>Cultural Odyssey</h2>
+            <h2>Tourism</h2>
+            <form id="cultural-form" action="#" method="#">Filter results: </form>
             <div class="panes"></div>
-        </div> -->
+        </div>
 
         <div class='catResults' id='natural-container'>
             <h2>Adventures in Nature</h2>
@@ -331,7 +348,7 @@
         </div> -->
     </div>
     <script>
-        async function loadResults(container, categories, filters) {
+        async function loadResults(container, categories, conditions) {
             if (categories.length == 0) { // TODO make into a error div later
                 console.log("Error: At least one category required");
                 return;
@@ -341,21 +358,21 @@
             $(`${containerId} .panes`).html("Searching...");
 
             if (wheelchair !== "") {
-                filters.push(wheelchair);
+                conditions.push(wheelchair);
             }
             if (wifi !== "") {
-                filters.push(wifi);
+                conditions.push(wifi);
             }
-            console.log("filters");
-            console.log(filters);
+            console.log("conditions");
+            console.log(conditions);
 
-            const conditions = filters.length == 0 ? "" : `&conditions=${ filters.join("%2C") }`;
+            const conditionStr = conditions.length == 0 ? "" : `&conditions=${ conditions.join("%2C") }`;
             const catStr = categories.join("%2C");
             
             // a lot of nature entries don't have enough detail - no guarantee, but we can get some extra entries
             // const maxResults = containerId == "natural-container" ? 30 : 4;
             const maxResults = 10;
-            const url = `https://api.geoapify.com/v2/places?categories=${catStr}${conditions}&filter=circle%3A${coordinates.lon}%2C${coordinates.lat}%2C${distMeters}&bias=proximity%3A${coordinates.lon}%2C${coordinates.lat}&limit=${maxResults}&apiKey=0b813d154863412cb86acd4b37d93c3b`;
+            const url = `https://api.geoapify.com/v2/places?categories=${catStr}${conditionStr}&filter=circle%3A${coordinates.lon}%2C${coordinates.lat}%2C${distMeters}&bias=proximity%3A${coordinates.lon}%2C${coordinates.lat}&limit=${maxResults}&apiKey=0b813d154863412cb86acd4b37d93c3b`;
 
             console.log(url);
 
@@ -431,12 +448,12 @@
             });
         }
 
-        function loadCategory(category, tagMap) {
+        function loadCategory(category, tags, tagDisplayNames, conditions) {
             // create filters
-            makeCategoryFilters(Object.values(tagMap), category);
+            makeCategoryFilters(tagDisplayNames, category);
 
             // make API call to populate this category's results
-            loadResults(category, Object.keys(tagMap), []);
+            loadResults(category, tags, conditions);
         }
 
         function makeClickEvent(button, catContainer, catForm) {
@@ -489,11 +506,17 @@
         }
 
         $(document).ready(function() {
+            // food
+            loadCategory("catering", cateringTypes, Object.values(cateringTags), dietRestrictions);
+
             // commercial
-            loadCategory("commercial", commercialTags);
+            loadCategory("commercial", Object.keys(commercialTags), Object.values(commercialTags), []);
 
             // natural
-            loadCategory("natural", naturalTags);            
+            loadCategory("natural", Object.keys(naturalTags), Object.values(naturalTags), []);
+
+            // tourist
+            loadCategory("cultural", Object.keys(culturalTags), Object.values(culturalTags), []);
         });
     </script>
 </body>
