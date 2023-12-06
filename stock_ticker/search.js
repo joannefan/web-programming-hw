@@ -48,9 +48,9 @@ async function searchDB(byCompany, val) {
         try {
             const target = {};
             if (byCompany) {
-                target['company'] = val;
+                target['company'] = {'$regex': val, '$options': 'i'};
             } else {
-                target['ticker'] = val;
+                target['ticker'] = {'$regex': val, '$options': 'i'};
             }
 
             const result = collection.find(target);
@@ -74,7 +74,7 @@ async function displayMatches(matches, res) {
         try {
             let content = "";
             if (matches.length == 0) {
-                content = "<h1>No Matches Found.</h1><p>Did you select the correct kind of input?</p>";
+                content = "<h1>No Matches Found.</h1>";
             } else {
                 content = "<h1>Matching Results:</h1><ul>";
                 matches.forEach(doc => {
