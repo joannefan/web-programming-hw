@@ -1,0 +1,473 @@
+<!doctype html>
+<html>
+<head>
+    <title>Your results</title>
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+    <style type="text/css">
+        body {
+            width: 100%;
+            background-color: white;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+        h1 {
+            margin-top: 50px;
+            color: black;
+            text-align: center;
+        }
+        h2 {
+            margin: 10px 0px;
+            color: grey;
+            text-align: center;
+            width: 100%;
+        }
+        .input-err {
+            display: block;
+            font-size: 18px;
+            color: black;
+        }
+        #cats-container {
+            display: block;
+            width: 100%;
+            margin: 0 auto;
+            padding: 0px;
+        }
+        .catResults {
+            width: 100%;
+            padding: 5px;
+            margin: 10px 0px;
+        }
+        .catResults input[type='button'] {
+            padding: 10px; /* Adjust the padding as needed */
+            display: inline-block;
+            border-radius: 0; 
+            border: 1px solid #000;
+        }
+        .panes {
+            display: flex;
+            flex-wrap: wrap;
+            font-size: 20px;
+            width: 100%;
+            margin: 0 auto;
+            overflow: scroll;
+            height: 400px;
+        }
+        #catering-container {
+            background-color: #ffdbad;
+        }
+        #commercial-container {
+            background-color: #e3c7cc;
+        }
+        #natural-container {
+            background-color:#CED097;
+        }
+        #cultural-container {
+            background-color: #E5BC9F;
+        }
+        #entertain-container {
+            background-color: #bbd8b3ff;
+        }
+        #commercial-form {
+            
+            display: block;
+        }
+
+        .place-info {
+            text-align: left;
+            display: block;
+            font-size: 18px;
+            padding: 10px 8px;
+            line-height: 1.5em;
+            margin: 0px auto;
+            width: 300px;
+            display: block;
+            background-color: white;
+            pointer-events: all;
+        }
+        .place-container {
+            display: block;
+            margin: 10px;
+        }
+        a {
+            text-decoration: none;
+        }
+        a:hover {
+            cursor: pointer;
+            color: #b6a75e;
+        }
+        ul {
+            line-height: 1.8em;
+            padding-left: 0px;
+        }
+        ul li {
+            margin: 20px 0px;
+            list-style: none;
+            line-height: 1.3em;
+        }
+        .place-name {
+            font-weight: bold;
+        }
+        b {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* tag icon with text for labeling results */
+        .tag-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tag-container img {
+            width: 100px;
+        }
+
+        .tag-container .tag-text {
+            position: absolute;
+            top: 40%;
+            left: 60%;
+            transform: translate(-50%, -50%);
+            color: black;
+            font-size: 16px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        // TODO validate city. If nonexistent, display error
+
+        // for building forms
+        const commercialOptions = {
+            "Supermarkets" : "commercial.supermarket",
+            "Marketplaces": "commercial.marketplace",
+            "Malls": "commercial.shopping_mall",
+            "Clothing": "commercial.clothing",
+            // "Banks/ATM": "service.financial.bank%2Cservice.financial.atm",
+            // "Public transportation": "public_transport",
+        };
+
+        const commercialTags = {
+            "commercial.supermarket": "Supermarkets",
+            "commercial.marketplace": "Marketplaces",
+            "commercial.shopping_mall": "Malls",
+            "commercial.clothing": "Clothing",
+            "service.financial.bank%2Cservice.financial.atm": "Banks/ATM",
+            "public_transport": "Transport",
+        };
+
+        function getCatTags(containerId) {
+            switch (containerId) {
+                case "commercial-container":
+                    return commercialTags;
+                default:
+                    return commercialTags;
+            }
+        }
+
+        // for extracting info from result places
+        const basicFields = [
+            "year_of_construction",
+            "opening_hours",
+            "phone",
+            "website",
+        ];
+
+        // info from general form that will be used in api query string
+        var cityName = "London";
+        var lonLat = { lat: 51.50853, lon: -0.12574 };
+        var distMeters = 9000;
+        var wheelchair = ""; // empty string means false
+        var wifi = ""; // empty string means false
+
+    
+        // if the category is a hierarchy, e.g., catering.cafe, get the parent category
+        // otherwise keep the whole category
+        function getParentCat(category) {
+            var periodIdx = category.indexOf(".");
+
+            let parentCat = category;
+            if (periodIdx !== -1) { 
+                parentCat = category.substring(0, periodIdx);
+            }
+            return parentCat;
+        }
+
+        function makeTag(text) {
+            text = text.replace(/_/g, ' ');
+            capitalized = text[0].toUpperCase() + text.slice(1);
+
+            const html = `<div class="tag-container">
+                            <img src="tag-icon.png" alt="grey tag with text">
+                            <div class="tag-text">${capitalized}</div>
+                            </div>`;
+
+            return html;
+        }
+
+        function makeLink(classname, url, text) {
+            return `<a href="${url}" class="${classname}">${text}</a>`;
+        }
+
+        function makeChkBox(name, id, val) {
+            return `<input type="checkbox" name="${name}" id="${id}" value="${val}" />`;
+        }
+
+        function makeFilter(classname, id, val) {
+            return `<input type="button" value="${val}" class="${classname}" id="${id}" />`;
+        }
+
+        function makeLabel(forId, text) {
+            return `<label for="${forId}">${text}</label>`;
+        }
+
+        function formatWebsite(url) {
+            return makeLink("weblink", url, "🔗 Read more");
+        }
+
+        function formatPhone(num) {
+            return makeLink("phonelink", "tel:" + num, "📞 Call us"); 
+        }
+
+        function formatHours(hoursStr) {
+            let formatted = hoursStr.replace(/;/g, '<br />&nbsp;&nbsp;&nbsp;&nbsp;');
+            formatted = formatted.replace(/, /g, '<br />&nbsp;&nbsp;&nbsp;&nbsp;');
+            return "🕒 " + formatted;
+        }
+
+        function formatAddress(addressStr) {
+            const addressLower = addressStr.toLowerCase();
+            const cityLower = cityName.toLowerCase();
+            const cityIdx = addressLower.indexOf(cityLower);
+
+            if (cityIdx !== -1) {
+                // truncate the address up to the city
+                return "📍 " + addressStr.substring(0, cityIdx + cityLower.length);
+            } else {
+                // if the city is not found, return the full address
+                return "📍 " + addressStr;
+            }
+        }
+
+        function metersToKm(meters) {
+            const km = meters / 1000;
+            const rounded = Math.round(km * 100) / 100;
+            return rounded;
+        }
+
+        function formatbasicFields(type, val) {
+            switch(type) {
+                case "phone":
+                    return formatPhone(val);
+                case "website": 
+                    return formatWebsite(val);
+                case "opening_hours":
+                    return formatHours(val);
+                case "year_of_construction":
+                    return "Year built: " + val;
+                default: 
+                    return "";
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>Build the Trip of a Lifetime</h1>
+    <div id="cats-container">
+        <!-- <form id="catering-form" action="#" method="#">
+            <h4>Restaurants and Cafes</h4>
+        </form>
+        <div class='catResults' id='catering-container'>
+            <h2>Culinary Expeditions</h2>
+            <div class="panes"></div>
+        </div> -->
+
+        <div class='catResults' id='commercial-container'>
+            <h2>Retail & Commercial</h2>
+            <form id="commercial-form" action="#" method="#">Filter results: </form>
+            <div class="panes"></div>
+        </div>
+
+        <!-- <form id="cultural-form" action="#" method="#">
+            <h4>Classic Tourist Sites</h4>
+        </form>
+        <div class='catResults' id='cultural-container'>
+            <h2>Cultural Odyssey</h2>
+            <div class="panes"></div>
+        </div>
+
+        <form id="natural-form" action="#" method="#">
+            <h4>One With Nature</h4>
+        </form>
+        <div class='catResults' id='natural-container'>
+            <h2>Adventures in Nature</h2>
+            <div class="panes"></div>
+        </div>
+        
+        <form id="entertain-form" action="#" method="#">
+            <h4>More Fun</h4>
+        </form>
+        <div class='catResults' id='entertain-container'>
+            <h2>Other Entertainment</h2>
+            <div class="panes"></div>
+        </div> -->
+    </div>
+    <script>
+        async function loadResults(containerId, categories, filters, lon, lat) {
+            if (categories.length == 0) { // TODO make into a error div later
+                console.log("Error: At least one category required");
+                return;
+            }
+
+            if (wheelchair !== "") {
+                filters.push(wheelchair);
+            }
+            if (wifi !== "") {
+                filters.push(wifi);
+            }
+            console.log("filters");
+            console.log(filters);
+
+            const conditions = filters.length == 0 ? "" : `&conditions=${ filters.join("%2C") }`;
+            const catStr = categories.join("%2C");
+            
+            // a lot of nature entries don't have enough detail - no guarantee, but we can get some extra entries
+            // const maxResults = containerId == "natural-container" ? 30 : 4;
+            const maxResults = 10;
+            const url = `https://api.geoapify.com/v2/places?categories=${catStr}${conditions}&filter=circle%3A${lon}%2C${lat}%2C${distMeters}&bias=proximity%3A${lon}%2C${lat}&limit=${maxResults}&apiKey=0b813d154863412cb86acd4b37d93c3b`;
+
+            console.log(url);
+
+            const catTags = getCatTags(containerId);
+
+            fetch(url)
+                .then(res => res.text())
+                .then(data => 
+                {
+                    const locations = JSON.parse(data);
+                    locationsArr = locations.features;
+
+                    let dataHTML = "";
+                    for (const place of locationsArr) {
+                        console.log(place);
+                        const info = place.properties;
+                        const placeCats = info.categories;
+
+                        // missing key info
+                        if (!("name" in info) || !("distance" in info)) {
+                            continue;
+                        }
+
+                        // features of this place to display as tags
+                        let matchingTags = [];
+                        for (const key in catTags) {                            
+                            if (placeCats.includes(key)) {
+                                matchingTags.push(catTags[key]);
+                            }
+                        }
+                        console.log(matchingTags);
+
+                        const tagsHTML = matchingTags.map(makeTag).join('');
+                        let list = `<ul>
+                            <li class='tags'>${tagsHTML}</li>
+                            <li class='place-name'>${info.name}</li>
+                            <li>${metersToKm(info.distance)} km away</li>
+                            <li>${formatAddress(info.formatted)}</li>`; // this is the full address
+
+                        const moreinfo = info.datasource.raw;
+
+                        for (const key of basicFields) {
+                            if (moreinfo.hasOwnProperty(key)) {
+                                list += `<li>${formatbasicFields(key, moreinfo[key])}</li>`;
+                            }
+                        }
+                        
+                        list += "</ul>";
+                        dataHTML += "<div class='place-container'><div class='place-info'>" + list + "</div></div>";
+                    }
+
+                    // no results found
+                    if (dataHTML === "") {
+                        dataHTML = "We couldn't find any matching results. You may need to unselect wheelchair only or Wi-Fi only.";
+                    }
+
+                    $(`#${containerId} .panes`).html(dataHTML); 
+                })
+            .catch (error => console.log(error));
+        }
+
+        $(document).ready(function() {
+            // populate form for commercial            
+            keys = Object.keys(commercialOptions);
+            keys.forEach((k, idx) => {
+                // const chkBox = makeChkBox("commercialChk", `chk${idx}commerc`, k) 
+                //                 + makeLabel(`chk${idx}commerc`, k) + "<br>";
+                // $('#commercial-form').append(chkBox);
+
+                const filter = makeFilter("commercialChk", `chk${idx}commerc`, k);
+                $('#commercial-form').append(filter);
+            });
+            // $("#commercial-form").append('<input type="submit" value="Filter">');
+        
+            $("#commercial-container .panes").html("Looking up the essentials for you...");
+            
+            const categories = Object.values(commercialOptions);
+            console.log(categories); 
+
+            loadResults("commercial-container", categories, [], lonLat.lon, lonLat.lat);
+
+            $("#commercial-form input[type='button']").each(function() {
+                $(this).click(function(event) {
+                    event.preventDefault();
+
+                    $(this).toggleClass('on');
+                    $(this).css('background-color', $(this).hasClass('on') ? 'beige' : 'white');
+
+                    // check which categories have been selected
+                    const categories = [];
+                    $("#commercial-form input[type='button']").each(function() {
+                        if ($(this).hasClass('on')) {
+                            const selectedFilter = $(this).val();
+                            categories.push(selectedFilter);
+                        }
+                    });
+                    console.log(categories); 
+
+                    // display only results that match at least one of the selected categories. 
+                    // If no filters are selected, show everything
+                    if (categories.length == 0) {
+                        $('#commercial-container .place-container').each(function() {
+                            $(this).show();
+                        })
+                    } else {
+                        $('#commercial-container .place-container').each(function() {
+                            const tagDivs = $(this).find('.tag-text');
+
+                            // Check if any tag-text div has text that is in the categories array
+                            let hasMatchingCategory = false;
+                            
+                            tagDivs.each(function() {
+                                const tagContent = $(this).text();
+                                if (categories.includes(tagContent)) {
+                                    hasMatchingCategory = true;
+                                    return false; // break out of the loop since we found a match
+                                }
+                            });
+
+                            // If this place does not have a matching category, hide it
+                            if (hasMatchingCategory) {
+                                $(this).show();
+                            } else {
+                                $(this).hide();
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+<!-- 
+    https://dev.opentripmap.org/docs#/Objects%20list/getListOfPlacesBySuggestions
+    categories: https://dev.opentripmap.org/catalog 
+    or in json: https://dev.opentripmap.org/en/catalog.tree.json 
+ -->

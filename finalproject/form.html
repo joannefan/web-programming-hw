@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Activity preferences</title>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+  </head>
+  <body>
+	<form id="general-form" action="process_form.php" method="post">
+        <label>City: </label>
+        <input type="text" id="user-text" name="desired-place" placeholder="London"/><br />
+        Limit search to a radius of <input type="text" id="dist-limit" name="maxDist" placeholder="3.5"> kilometers<br />
+
+        <input type="checkbox" name="accessibility" id="chkWheelchair" value="wheelchair"/>
+        <label for="chkWheelchair">Only wheelchair-friendly</label><br />
+
+        <input type="checkbox" name="wifi" id="chkWifi" value="internet_access"/>
+        <label for="chkWifi">Only places with Internet Access</label><br />
+
+        CATERING
+        <input type="radio" name="cateringCat" class="food-cat" id="chk-restaurant" value="catering.restaurant">
+        <label for="chk-restaurant">Restaurants only</label><br />
+        <input type="radio" name="cateringCat" class="food-cat" id="chk-cafe" value="catering.cafe">
+        <label for="chk-cafe">Cafes only</label><br />
+        <input type="radio" name="cateringCat" class="food-cat" id="chk-all" value="catering" checked>
+        <label for="chk-all">Restaurants, cafes, fast food, bars</label><br /><br />
+
+        <input type="submit" value="Submit">
+        <div class="input-err"></div>
+    </form>
+
+    <script>
+        // TODO onsubmit, validate forms
+        function validateDist(dist) {
+            const distNum = parseFloat(dist);
+
+            // if successfully converted into a numeric value, return in meters
+            if (!isNaN(distNum)) {
+                const meters = Math.round(distNum * 1000);
+                return meters;
+            } else {
+                // if cannot be converted into a number, display error message
+                $(".input-err").html("Error: radius must be numeric. Defaulted to 3 km.");
+                return 3000;
+            }
+        }
+    </script>
+  </body>
+</html>
