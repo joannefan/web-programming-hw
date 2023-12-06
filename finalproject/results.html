@@ -41,8 +41,13 @@
             padding: 10px; /* Adjust the padding as needed */
             display: inline-block;
             border-radius: 0; 
-            border: 1px solid #000;
+            border: 1px solid grey;
+            background-color: white;
         }
+        .catResults input[type='button']:hover {
+            cursor: pointer;
+        }
+
         .panes {
             display: flex;
             flex-wrap: wrap;
@@ -67,27 +72,24 @@
         #entertain-container {
             background-color: #bbd8b3ff;
         }
-        #commercial-form {
-            
+        form {
             display: block;
+            margin-bottom: 10px;
         }
 
         .place-info {
             text-align: left;
             display: block;
             font-size: 18px;
-            padding: 10px 8px;
+            padding: 10px;
             line-height: 1.5em;
-            margin: 0px auto;
+            margin: 6px;
             width: 300px;
             display: block;
             background-color: white;
             pointer-events: all;
         }
-        .place-container {
-            display: block;
-            margin: 10px;
-        }
+
         a {
             text-decoration: none;
         }
@@ -135,28 +137,48 @@
         // TODO validate city. If nonexistent, display error
 
         // for building forms
-        const commercialOptions = {
-            "Supermarkets" : "commercial.supermarket",
-            "Marketplaces": "commercial.marketplace",
-            "Malls": "commercial.shopping_mall",
-            "Clothing": "commercial.clothing",
-            // "Banks/ATM": "service.financial.bank%2Cservice.financial.atm",
-            // "Public transportation": "public_transport",
-        };
+        // const commercialOptions = {
+        //     "Supermarkets" : "commercial.supermarket",
+        //     "Marketplaces": "commercial.marketplace",
+        //     "Malls": "commercial.shopping_mall",
+        //     "Clothing": "commercial.clothing",
+        //     // "Banks/ATM": "service.financial.bank%2Cservice.financial.atm",
+        //     // "Public transportation": "public_transport",
+        // };
 
         const commercialTags = {
             "commercial.supermarket": "Supermarkets",
             "commercial.marketplace": "Marketplaces",
             "commercial.shopping_mall": "Malls",
             "commercial.clothing": "Clothing",
-            "service.financial.bank%2Cservice.financial.atm": "Banks/ATM",
-            "public_transport": "Transport",
+            // "service.financial.bank%2Cservice.financial.atm": "Banks/ATM",
+            // "public_transport": "Transport",
         };
+
+        const naturalTags = {
+            "natural.forest": "Forests",
+            "natural.water": "Water",
+            "natural.mountain": "Mountains",
+            "camping": "Camping Sites",
+            "leisure.park": "Parks",
+            // "natural": "Any nature"
+        };
+
+        // const culturalOptions = {
+        //     "Famous Tourist Sites": "tourism.sights",
+        //     "Theatre & Arts": "entertainment.culture",
+        //     "Museums": "entertainment.museum",
+        //     "Universities": "building.university%2Cbuilding.college",
+        //     "Religious Sites": "tourism.sights.place_of_worship",
+        //     "Historical Sites": "building.historic"
+        // };
 
         function getCatTags(containerId) {
             switch (containerId) {
                 case "commercial-container":
                     return commercialTags;
+                case "natural-container":
+                    return naturalTags;
                 default:
                     return commercialTags;
             }
@@ -172,7 +194,7 @@
 
         // info from general form that will be used in api query string
         var cityName = "London";
-        var lonLat = { lat: 51.50853, lon: -0.12574 };
+        var coordinates = { lat: 51.50853, lon: -0.12574 };
         var distMeters = 9000;
         var wheelchair = ""; // empty string means false
         var wifi = ""; // empty string means false
@@ -214,9 +236,9 @@
             return `<input type="button" value="${val}" class="${classname}" id="${id}" />`;
         }
 
-        function makeLabel(forId, text) {
-            return `<label for="${forId}">${text}</label>`;
-        }
+        // function makeLabel(forId, text) {
+        //     return `<label for="${forId}">${text}</label>`;
+        // }
 
         function formatWebsite(url) {
             return makeLink("weblink", url, "🔗 Read more");
@@ -292,17 +314,15 @@
         <div class='catResults' id='cultural-container'>
             <h2>Cultural Odyssey</h2>
             <div class="panes"></div>
-        </div>
+        </div> -->
 
-        <form id="natural-form" action="#" method="#">
-            <h4>One With Nature</h4>
-        </form>
         <div class='catResults' id='natural-container'>
             <h2>Adventures in Nature</h2>
+            <form id="natural-form" action="#" method="#">Filter results: </form>
             <div class="panes"></div>
         </div>
         
-        <form id="entertain-form" action="#" method="#">
+        <!-- <form id="entertain-form" action="#" method="#">
             <h4>More Fun</h4>
         </form>
         <div class='catResults' id='entertain-container'>
@@ -311,11 +331,14 @@
         </div> -->
     </div>
     <script>
-        async function loadResults(containerId, categories, filters, lon, lat) {
+        async function loadResults(container, categories, filters) {
             if (categories.length == 0) { // TODO make into a error div later
                 console.log("Error: At least one category required");
                 return;
             }
+
+            const containerId = `#${container}-container`;
+            $(`${containerId} .panes`).html("Searching...");
 
             if (wheelchair !== "") {
                 filters.push(wheelchair);
@@ -332,11 +355,9 @@
             // a lot of nature entries don't have enough detail - no guarantee, but we can get some extra entries
             // const maxResults = containerId == "natural-container" ? 30 : 4;
             const maxResults = 10;
-            const url = `https://api.geoapify.com/v2/places?categories=${catStr}${conditions}&filter=circle%3A${lon}%2C${lat}%2C${distMeters}&bias=proximity%3A${lon}%2C${lat}&limit=${maxResults}&apiKey=0b813d154863412cb86acd4b37d93c3b`;
+            const url = `https://api.geoapify.com/v2/places?categories=${catStr}${conditions}&filter=circle%3A${coordinates.lon}%2C${coordinates.lat}%2C${distMeters}&bias=proximity%3A${coordinates.lon}%2C${coordinates.lat}&limit=${maxResults}&apiKey=0b813d154863412cb86acd4b37d93c3b`;
 
             console.log(url);
-
-            const catTags = getCatTags(containerId);
 
             fetch(url)
                 .then(res => res.text())
@@ -357,10 +378,12 @@
                         }
 
                         // features of this place to display as tags
+                        const allTags = getCatTags(`${container}-container`);
                         let matchingTags = [];
-                        for (const key in catTags) {                            
+
+                        for (const key in allTags) {                            
                             if (placeCats.includes(key)) {
-                                matchingTags.push(catTags[key]);
+                                matchingTags.push(allTags[key]);
                             }
                         }
                         console.log(matchingTags);
@@ -381,7 +404,7 @@
                         }
                         
                         list += "</ul>";
-                        dataHTML += "<div class='place-container'><div class='place-info'>" + list + "</div></div>";
+                        dataHTML += "<div class='place-info'>" + list + "</div>";
                     }
 
                     // no results found
@@ -389,79 +412,88 @@
                         dataHTML = "We couldn't find any matching results. You may need to unselect wheelchair only or Wi-Fi only.";
                     }
 
-                    $(`#${containerId} .panes`).html(dataHTML); 
+                    $(`${containerId} .panes`).html(dataHTML); 
                 })
             .catch (error => console.log(error));
         }
 
-        $(document).ready(function() {
-            // populate form for commercial            
-            keys = Object.keys(commercialOptions);
-            keys.forEach((k, idx) => {
-                // const chkBox = makeChkBox("commercialChk", `chk${idx}commerc`, k) 
-                //                 + makeLabel(`chk${idx}commerc`, k) + "<br>";
-                // $('#commercial-form').append(chkBox);
+        function makeCategoryFilters(filterNames, category) {
+            const formId = `#${category}-form`;
+            const containerId = `#${category}-container`;
 
-                const filter = makeFilter("commercialChk", `chk${idx}commerc`, k);
-                $('#commercial-form').append(filter);
+            filterNames.forEach((k, idx) => {
+                const filter = makeFilter(`${category}Chk`, `chk${idx}${category}`, k);
+                $(formId).append(filter);
             });
-            // $("#commercial-form").append('<input type="submit" value="Filter">');
-        
-            $("#commercial-container .panes").html("Looking up the essentials for you...");
-            
-            const categories = Object.values(commercialOptions);
-            console.log(categories); 
 
-            loadResults("commercial-container", categories, [], lonLat.lon, lonLat.lat);
+            $(`${formId} input[type='button']`).each(function() {
+                makeClickEvent($(this), $(containerId), $(formId));
+            });
+        }
 
-            $("#commercial-form input[type='button']").each(function() {
-                $(this).click(function(event) {
-                    event.preventDefault();
+        function loadCategory(category, tagMap) {
+            // create filters
+            makeCategoryFilters(Object.values(tagMap), category);
 
-                    $(this).toggleClass('on');
-                    $(this).css('background-color', $(this).hasClass('on') ? 'beige' : 'white');
+            // make API call to populate this category's results
+            loadResults(category, Object.keys(tagMap), []);
+        }
 
-                    // check which categories have been selected
-                    const categories = [];
-                    $("#commercial-form input[type='button']").each(function() {
-                        if ($(this).hasClass('on')) {
-                            const selectedFilter = $(this).val();
-                            categories.push(selectedFilter);
-                        }
-                    });
-                    console.log(categories); 
+        function makeClickEvent(button, catContainer, catForm) {
+            button.click(function(event) {
+                event.preventDefault();
 
-                    // display only results that match at least one of the selected categories. 
-                    // If no filters are selected, show everything
-                    if (categories.length == 0) {
-                        $('#commercial-container .place-container').each(function() {
-                            $(this).show();
-                        })
-                    } else {
-                        $('#commercial-container .place-container').each(function() {
-                            const tagDivs = $(this).find('.tag-text');
+                button.toggleClass('on');
+                button.css('background-color', button.hasClass('on') ? 'beige' : 'white');
 
-                            // Check if any tag-text div has text that is in the categories array
-                            let hasMatchingCategory = false;
-                            
-                            tagDivs.each(function() {
-                                const tagContent = $(this).text();
-                                if (categories.includes(tagContent)) {
-                                    hasMatchingCategory = true;
-                                    return false; // break out of the loop since we found a match
-                                }
-                            });
-
-                            // If this place does not have a matching category, hide it
-                            if (hasMatchingCategory) {
-                                $(this).show();
-                            } else {
-                                $(this).hide();
-                            }
-                        });
+                // check which categories have been selected
+                const categories = [];
+                catForm.find("input[type='button']").each(function() {
+                    if ($(this).hasClass('on')) {
+                        const selectedFilter = $(this).val();
+                        categories.push(selectedFilter);
                     }
                 });
+                console.log(categories); 
+
+                // display only results that match at least one of the selected categories. 
+                // If no filters are selected, show everything
+                if (categories.length == 0) {
+                    catContainer.find('.place-info').each(function() {
+                        $(this).show();
+                    })
+                } else {
+                    catContainer.find('.place-info').each(function() {
+                        const tagDivs = $(this).find('.tag-text');
+
+                        // Check if any tag-text div has text that is in the categories array
+                        let hasMatchingCategory = false;
+                        
+                        tagDivs.each(function() {
+                            const tagContent = $(this).text();
+                            if (categories.includes(tagContent)) {
+                                hasMatchingCategory = true;
+                                return false; // break out of the loop since we found a match
+                            }
+                        });
+
+                        // If this place does not have a matching category, hide it
+                        if (hasMatchingCategory) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                }
             });
+        }
+
+        $(document).ready(function() {
+            // commercial
+            loadCategory("commercial", commercialTags);
+
+            // natural
+            loadCategory("natural", naturalTags);            
         });
     </script>
 </body>
