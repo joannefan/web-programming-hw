@@ -1,51 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Activity preferences</title>
-    <!-- <link rel="stylesheet" href="style.css"> -->
-  </head>
-  <body>
-	<form id="general-form" action="process_form.php" method="post">
-        <label>City: </label>
-        <input type="text" id="user-text" name="desired-place" placeholder="London"/><br />
-        Limit search to a radius of <input type="text" id="dist-limit" name="maxDist" placeholder="3.5"> kilometers<br />
-
-        <input type="checkbox" name="accessibility" id="chkWheelchair" value="wheelchair"/>
-        <label for="chkWheelchair">Only wheelchair-friendly</label><br />
-
-        <input type="checkbox" name="wifi" id="chkWifi" value="internet_access"/>
-        <label for="chkWifi">Only places with Internet Access</label><br />
-
-        CATERING
-        <input type="radio" name="cateringCat" class="food-cat" id="chk-restaurant" value="catering.restaurant">
-        <label for="chk-restaurant">Restaurants only</label><br />
-        <input type="radio" name="cateringCat" class="food-cat" id="chk-cafe" value="catering.cafe">
-        <label for="chk-cafe">Cafes only</label><br />
-        <input type="radio" name="cateringCat" class="food-cat" id="chk-all" value="catering" checked>
-        <label for="chk-all">Restaurants, cafes, fast food, bars</label><br /><br />
-
-        <input type="submit" value="Submit">
-        <div class="input-err"></div>
-    </form>
-
-    <script>
-        // TODO onsubmit, validate forms
-        function validateDist(dist) {
-            const distNum = parseFloat(dist);
-
-            // if successfully converted into a numeric value, return in meters
-            if (!isNaN(distNum)) {
-                const meters = Math.round(distNum * 1000);
-                return meters;
-            } else {
-                // if cannot be converted into a number, display error message
-                $(".input-err").html("Error: radius must be numeric. Defaulted to 3 km.");
-                return 3000;
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.7.1.slim.js" integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+        <title>Activity Form</title>
+        <style>
+            #dietQuestion {
+                display: none;
             }
-        }
-    </script>
-  </body>
+        </style>
+    </head>
+    <body>
+        <!-- action="processForm.php" method="post" -->
+        <form id="general-form" onSubmit="return validate()" > 
+            Search activities within 
+            <input type="text" id="dist-limit" name="maxDist" placeholder="6.5">
+             kilometers of my hotel<br />
+
+            <p>I want ideas for...</p>
+            <input type="checkbox" id="chkCultural" name="activity[]" value="cultural">
+            <label for="chkCultural">Cultural and Tourist Activities</label><br />
+
+            <input type="checkbox" id="chkNature" name="activity[]" value="natural">
+            <label for="chkNature">Nature Exploration</label><br />
+
+            <input type="checkbox" id="chkCommercial" name="activity[]" value="commercial">
+            <label for="chkCommercial">Shopping and Spending</label><br />
+
+            <input type="checkbox" id="chkFood" name="activity[]" value="catering">
+            <label for="chkFood">Food and Drink</label><br />
+
+            <input type="checkbox" id="chkAll">
+            <label for="chkAll">All the above</label><br />
+
+            <div id="dietQuestion">
+                <p>(optional) My dietary restrictions are...</p>
+                <input type="checkbox" id="chkVegetarian" name="diet[]" value="vegetarian">
+                <label for="chkVegetarian">Vegetarian</label><br />
+
+                <input type="checkbox" id="chkVegan" name="diet[]" value="vegan">
+                <label for="chkVegan">Vegan</label><br />
+
+                <input type="checkbox" id="chkHalal" name="diet[]" value="halal">
+                <label for="chkHalal">Halal</label><br />
+
+                <input type="checkbox" id="chkKosher" name="diet[]" value="kosher">
+                <label for="chkKosher">Kosher</label><br />
+            </div>
+
+            <p>(optional) Limit all places to...</p>
+            <input type="checkbox" id="chkWheelchair" name="accessibility" value="wheelchair"/>
+            <label for="chkWheelchair">Wheelchair-friendly places</label><br />
+
+            <input type="checkbox" id="chkWifi" name="wifi" value="internet_access"/>
+            <label for="chkWifi">Places with internet access</label><br />
+
+            <input type="submit" value="Submit">
+            <div class="input-err"></div>
+        </form>
+
+        <script>
+            // if the "All the above" checkbox is clicked, check all the other activities checkboxes.
+            $('#chkAll').on('click', function() {
+                $('input[name="activity[]"]').prop('checked', this.checked);
+            });
+
+            // Toggle the visibility of the question about dietary restrictions
+            // based on whether the chkFood checkbox is checked
+            $('#chkFood').on('change', function() {
+                $('#dietQuestion').toggle(this.checked);
+            });
+
+            function validate() {
+                const distInput = $("#dist-limit").val();
+                
+                let err = "";
+
+                // check if user provided numeric distance or didn't provide (then use default)
+                // otherwise output error
+                if (distInput !== "" && isNaN(parseFloat(distInput))) {
+                    err += `"Distance is not a number.<br />`;
+                } else {
+                    const distNum = parseFloat(distInput);
+                    if (distNum < 0.5) {
+                        err += `Distance must be at least 0.5 km.<br />`;
+                    }
+                }
+
+                if ($('input[name="activity[]"]:checked').length === 0) {
+                    err += 'Please select at least one category of activities to generate ideas for.<br />';
+                }
+
+                if (err !== "") {
+                    $(".input-err").html("Fix the following errors to continue:<br /><br />" + err);
+                    return false;
+                }
+
+                $(".input-err").html("");
+                return true;
+            }
+        </script>
+    </body>
 </html>
