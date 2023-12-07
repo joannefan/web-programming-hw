@@ -7,15 +7,15 @@
     <style type="text/css">
         body {
             background-color: #FAE7C6;
-            background-image: url('quote-icon.png');
-            background-position: bottom;
+            background-image: url(contact-background.jpeg);
+            background-position: top;
             background-repeat: no-repeat;
-            background-size: 1160px; 
+            background-attachment: fixed;
+            background-size: cover;
         }
         .banner {
             display: block;
             margin: 0 auto;
-            background-color: #a6cfd5;
             height: 250px;
             text-align: center;
         }
@@ -32,7 +32,16 @@
             text-align: center;
             color: #2a3d45;
         }
+        #form-wrapper {
+            display: block;
+            margin: 0 auto;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+            background-color: aliceblue;
+        }
         form {
+            padding-top: 4px;
             display: block;
             margin: 0 auto;
             width: 100%;
@@ -188,27 +197,29 @@
     </nav>
 
     <div class="banner">
-        <div id="banner-overlay"><img src="contact-icon.png" alt="mail icon"><h2>Get in Touch</h2></div>
+        <img src="contact-icon.png" alt="mail icon"><h2>Get in Touch</h2>
     </div>
-    <form onSubmit="return validate()" method="POST" action="confirmation.php">
-        <h4>If you have any questions or need help, please fill out the form below.</h4>
-        <input type='text' name='first' id="fname" placeholder="First name*"/><br />
-        <input type='text' name='last' id="lname" placeholder="Last Name*"/><br />
-        <input type='text' name='email' id="email" placeholder="Email*"/><br />
-        <input type='text' name='phone' id="phone" placeholder="Phone Number"/><br />
-        <select name="query" id="queryType" >
-            <option value="" disabled selected>Select a Purpose</option>
-            <option value="donation">Product/Service Question</option>
-            <option value="opportunities">Feature Request</option>
-            <option value="programs">Advertising</option>
-            <option value="collab">Business Inquiry</option>
-            <option value="feedback">General Question</option>
-            <option value="other">Other</option>
-        </select><br />
-        <textarea id="message" placeholder="Message*"></textarea><br />
-        <input type="submit" value="Submit"/>
-        <div id="error">&nbsp;</div>
-    </form>
+    <div id="form-wrapper">
+        <form onSubmit="return validate()" method="POST" action="confirmation.php">
+            <h4>If you have any questions or need help, please fill out the form below.</h4>
+            <input type='text' name='first' id="fname" placeholder="First name*"/><br />
+            <input type='text' name='last' id="lname" placeholder="Last Name*"/><br />
+            <input type='text' name='email' id="email" placeholder="Email*"/><br />
+            <input type='text' name='phone' id="phone" placeholder="Phone Number"/><br />
+            <select name="query" id="queryType" >
+                <option value="" disabled selected>Select a Purpose</option>
+                <option value="donation">Product/Service Question</option>
+                <option value="opportunities">Feature Request</option>
+                <option value="programs">Advertising</option>
+                <option value="collab">Business Inquiry</option>
+                <option value="feedback">General Question</option>
+                <option value="other">Other</option>
+            </select><br />
+            <textarea id="message" placeholder="Message*"></textarea><br />
+            <input type="submit" value="Submit"/>
+            <div id="error">&nbsp;</div>
+        </form>
+    </div>
   
     <!-- <footer class="footer">
         
@@ -216,4 +227,4 @@
 </body>
 </html>
 
-<!-- Inspired by https://www.pixpa.com/contact-us -->
+<!-- Form inspired by https://www.pixpa.com/contact-us -->

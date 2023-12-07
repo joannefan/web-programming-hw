@@ -34,8 +34,8 @@
         }
         .catResults {
             width: 100%;
-            padding: 10px 0px;
-            margin: 30px 0px;
+            padding: 10px 0px 30px 0px;
+            margin: 0px;
         }
         .catResults input[type='button'] {
             padding: 10px; /* Adjust the padding as needed */
@@ -55,6 +55,7 @@
             width: 100%;
             margin: 0 auto;
             overflow: scroll;
+            overflow-x: hidden;
             height: 400px;
         }
         #catering-container {
@@ -220,19 +221,6 @@
         var wheelchair = ""; // empty string means false
         var wifi = ""; // empty string means false
 
-    
-        // if the category is a hierarchy, e.g., catering.cafe, get the parent category
-        // otherwise keep the whole category
-        function getParentCat(category) {
-            var periodIdx = category.indexOf(".");
-
-            let parentCat = category;
-            if (periodIdx !== -1) { 
-                parentCat = category.substring(0, periodIdx);
-            }
-            return parentCat;
-        }
-
         function makeTag(text) {
             text = text.replace(/_/g, ' ');
             capitalized = text[0].toUpperCase() + text.slice(1);
@@ -256,10 +244,6 @@
         function makeFilter(classname, id, val) {
             return `<input type="button" value="${val}" class="${classname}" id="${id}" />`;
         }
-
-        // function makeLabel(forId, text) {
-        //     return `<label for="${forId}">${text}</label>`;
-        // }
 
         function formatWebsite(url) {
             return makeLink("weblink", url, "🔗 Read more");

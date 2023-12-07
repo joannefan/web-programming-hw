@@ -18,16 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $wifi = isset($_POST['wifi']) ? $_POST['wifi'] : '';
 
     // get the array of activity categories
-    $categoriesToShow = [];
+    $catsWanted = [];
     if (isset($_POST["activity"])) {
         foreach ($_POST["activity"] as $activityCat) {
-            $categories[] = $activityCat;
+            $catsWanted[] = $activityCat;
         }
     }
 
     // if food category is selected, also check if user provided dietary restrictions
     $diet = [];
-    if (in_array("catering", $categories)) {
+    if (in_array("catering", $catsWanted)) {
         if (isset($_POST["diet"])) {
             foreach ($_POST["diet"] as $dietType) {
                 $diet[] = $dietType;
@@ -77,8 +77,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         .catResults {
             width: 100%;
-            padding: 10px 0px;
-            margin: 30px 0px;
+            padding: 10px 0px 30px 0px;
+            margin: 0px;
+            display: none; /* not shown unless user chose the category in the form */
         }
         .catResults input[type='button'] {
             padding: 10px; /* Adjust the padding as needed */
@@ -98,6 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             width: 100%;
             margin: 0 auto;
             overflow: scroll;
+            overflow-x: hidden;
             height: 400px;
         }
         #catering-container {
@@ -233,7 +235,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const wheelchair = <?php echo json_encode($wheelchair); ?>;   // empty string means false
         const wifi = <?php echo json_encode($wifi); ?>;               // empty string means false
         const dietRestrictions = <?php echo json_encode($diet); ?>;
-        const allCategories = <?php echo json_encode($categoriesToShow); ?>;
+        const allCategories = <?php echo json_encode($catsWanted); ?>;
 
         console.log("meters: " + distMeters);
         console.log("city:" + cityName);
@@ -387,6 +389,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             const maxResults = 10;
             const url = `https://api.geoapify.com/v2/places?categories=${catStr}${conditionStr}&filter=circle%3A${coordinates.lon}%2C${coordinates.lat}%2C${distMeters}&bias=proximity%3A${coordinates.lon}%2C${coordinates.lat}&limit=${maxResults}&apiKey=0b813d154863412cb86acd4b37d93c3b`;
 
+            console.log(url);
+
             fetch(url)
                 .then(res => res.text())
                 .then(data => 
@@ -459,6 +463,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         function loadCategory(category, tags, tagDisplayNames, conditions) {
+            $(`#${category}-container`).css("display", "block");
             // create filters
             makeCategoryFilters(tagDisplayNames, category);
 
@@ -516,22 +521,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $(document).ready(function() {
             // food
-            if (allCategories.include("catering")) {
+            if (allCategories.includes("catering")) {
+                console.log(dietRestrictions);
                 loadCategory("catering", cateringTypes, Object.values(cateringTags), dietRestrictions);
             }
             
             // commercial
-            if (allCategories.include("commercial")) {
+            if (allCategories.includes("commercial")) {
                 loadCategory("commercial", Object.keys(commercialTags), Object.values(commercialTags), []);
             }
 
             // natural
-            if (allCategories.include("natural")) {
+            if (allCategories.includes("natural")) {
                 loadCategory("natural", Object.keys(naturalTags), Object.values(naturalTags), []);
             }
 
             // tourist
-            if (allCategories.include("cultural")) {
+            if (allCategories.includes("cultural")) {
                 loadCategory("cultural", Object.keys(culturalTags), Object.values(culturalTags), []);
             }
         });
