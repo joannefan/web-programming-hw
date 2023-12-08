@@ -3,8 +3,8 @@ var url = require('url');
 var fs = require('fs');
 const { MongoClient } = require('mongodb');
 
-// var port = process.env.PORT || 3000;
-var port = 8080;
+var port = process.env.PORT || 3000;
+// var port = 8080;
 const uri = "mongodb+srv://dbuser1:void-10ne@cluster0.cix9qnf.mongodb.net/?retryWrites=true&w=majority";
 const client = new MongoClient(uri);
 
